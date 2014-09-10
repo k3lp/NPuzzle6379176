@@ -7,6 +7,7 @@ The N-Puzzle is an Android application based on the classic N-Puzzle game.
 
 
 Features:
+-------------
 * This Android Application has a splash screen.
 *	It is possible to play the game in three levels of difficulty. The first level will start a 3-puzzle (3x3). The second level a 4-puzzle (4x4) and the highest level of difficulty will start a 5-puzzle (5x5).
 *	On boot, the user is presented with a list of images, any one of which will serve as the basis for the n-puzzle.
