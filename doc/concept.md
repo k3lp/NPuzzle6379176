@@ -15,9 +15,9 @@ Comments van meerdere regels worden anders gedaan:
 ```
 Brackets
 -------------
-'''
+```
 int voorbeeld(int a)
 {
     return 0;
 }
-'''
+```
