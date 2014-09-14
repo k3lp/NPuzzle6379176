@@ -1,9 +1,6 @@
 N-Puzzle Concept
 ==========
 
-Database tables and fields:
--------------
-*	State wordt opgeslagen in shared preferences.
 
 
 Classes and methods:
@@ -22,6 +19,9 @@ Classes and methods:
 	* ![Alt text](endgame_sketch.jpg)
 
 
+Databases:
+-------------
+*	State wordt opgeslagen in shared preferences.
 
 
 Styleguide:
