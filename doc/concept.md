@@ -13,5 +13,11 @@ Comments van meerdere regels worden anders gedaan:
  * Met meerdere regels.
  */
 ```
-Loops
+Brackets
 -------------
+'''
+int voorbeeld(int a)
+{
+    return 0;
+}
+'''
