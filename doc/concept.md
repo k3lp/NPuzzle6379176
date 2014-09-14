@@ -18,6 +18,6 @@ Brackets
 ```
 int voorbeeld(int a)
 {
-    return 0;
+    return a;
 }
 ```
