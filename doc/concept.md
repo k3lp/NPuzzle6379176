@@ -15,11 +15,11 @@ Classes and methods:
 	* heeft een horizontale gallery view van images die geselecteerd kunnen worden als puzzel
 	* heeft een slider voor de moeilijkheidsgraad (1 tot 3)
 	* heeft een button om het spel te starten met de aangewezen specificaties
-	* ![Alt text](/start_sketch.jpg)
+	* ![Alt text](start_sketch.jpg)
 * GameActivity 	
 * EndofgameActivity 
 	* Popup met score en naam invoeren, slaat deze dan op in SQLite Database.
-	* ![Alt text](/endgame_sketch.jpg)
+	* ![Alt text](endgame_sketch.jpg)
 
 
 
