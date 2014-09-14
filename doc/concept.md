@@ -18,7 +18,7 @@ Classes and methods:
 	* ![Alt text](start_sketch.jpg)
 * GameActivity 	
 * EndofgameActivity 
-	* Popup met score en naam invoeren, slaat deze dan op in SQLite Database.
+	* Popup met tekst, knop gaat naar MainActivity
 	* ![Alt text](endgame_sketch.jpg)
 
 
