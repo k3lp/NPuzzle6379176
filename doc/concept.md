@@ -7,12 +7,15 @@ Classes and methods:
 -------------
 * SplashActivity
 	* splashscreen
-* MainActivity 	
+	* gaat over in StartActivity
+* StartActivity 	
 	* scherm met instellingen voor een nieuwe n-puzzle
 	* heeft een horizontale gallery view van images die geselecteerd kunnen worden als puzzel
 	* heeft een slider voor de moeilijkheidsgraad (1 tot 3)
 	* heeft een button om het spel te starten met de aangewezen specificaties
 	* ![Alt text](start_sketch.jpg)
+	
+
 * GameActivity 	
 	* bestaat uit een deel met n tiles (3x3. 4x4. 5x5)
 	* Laat de puzzel voor 3 seconde correct zien
@@ -20,14 +23,18 @@ Classes and methods:
 	* heeft een button restart wat GameActivity opnieuw aanroept met de gekozen specificaties
 	* heeft een button menu die gaat naar MenuActivity
 	* ![Alt text](game_sketch.jpg)
+	
+	
 * MenuActivity
 	* geeft een popup over het scherm van GameActivity
 	* in de popup zijn vier buttons
-	* Button Afbeelding gaat naar de MainActivity en laat de gebruiker een nieuwe afbeelding kiezen
+	* Button Afbeelding gaat naar de StartActivity en laat de gebruiker een nieuwe afbeelding kiezen
 	* Button Makkelijker start een nieuw game met, indien mogelijk, de puzzel een niveau lager
 	* Button Makkelijker start een nieuw game met, indien mogelijk, de puzzel een niveau hoger
 	* Button Exit sluit het spel af
 	* ![Alt text](menu_sketch.jpg)
+	
+	
 * EndofgameActivity 
 	* Popup met tekst, knop gaat naar MainActivity
 	* ![Alt text](endgame_sketch.jpg)
