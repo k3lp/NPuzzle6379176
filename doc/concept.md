@@ -15,10 +15,10 @@ Classes and methods:
 	* ![Alt text](start_sketch.jpg)
 * GameActivity 	
 	* bestaat uit een deel met n tiles (3x3. 4x4. 5x5)
-	* 
-	* heeft een slider voor de moeilijkheidsgraad (1 tot 3)
-	* heeft een button om het spel te restarten
-	* heeft een button naar het menu activity
+	* Laat de puzzel voor 3 seconde correct zien
+	* daarna verwijder 1 tile en hussel de tiles met elkaar
+	* heeft een button restart wat GameActivity opnieuw aanroept met de gekozen specificaties
+	* heeft een button menu die gaat naar MenuActivity
 	* ![Alt text](game_sketch.jpg)
 * MenuActivity
 	* geeft een popup over het scherm van GameActivity
