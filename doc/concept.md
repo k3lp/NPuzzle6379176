@@ -13,7 +13,7 @@ Classes and methods:
 	* heeft een horizontale gallery view van images die geselecteerd kunnen worden als puzzel
 	* heeft een slider voor de moeilijkheidsgraad (1 tot 3)
 	* heeft een button om het spel te starten met de aangewezen specificaties
-*![Alt text](start_sketch.jpg)
+	*![Alt text](start_sketch.jpg)
 	
 
 * GameActivity 	
@@ -22,7 +22,7 @@ Classes and methods:
 	* daarna verwijder 1 tile en hussel de tiles met elkaar
 	* heeft een button restart wat GameActivity opnieuw aanroept met de gekozen specificaties
 	* heeft een button menu die gaat naar MenuActivity
-*![Alt text](game_sketch.jpg)
+	*![Alt text](game_sketch.jpg)
 	
 	
 * MenuActivity
@@ -32,12 +32,12 @@ Classes and methods:
 	* Button Makkelijker start een nieuw game met, indien mogelijk, de puzzel een niveau lager
 	* Button Makkelijker start een nieuw game met, indien mogelijk, de puzzel een niveau hoger
 	* Button Exit sluit het spel af
-*![Alt text](menu_sketch.jpg)
+	*![Alt text](menu_sketch.jpg)
 	
 	
 * EndofgameActivity 
 	* Popup met tekst, knop gaat naar MainActivity
-*![Alt text](endgame_sketch.jpg)
+	*![Alt text](endgame_sketch.jpg)
 
 
 Databases:
