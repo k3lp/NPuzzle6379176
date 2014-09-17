@@ -13,6 +13,7 @@ Classes and methods:
 	* heeft een horizontale gallery view van images die geselecteerd kunnen worden als puzzel
 	* heeft een slider voor de moeilijkheidsgraad (1 tot 3)
 	* heeft een button om het spel te starten met de aangewezen specificaties
+	* specificaties worden meegegeven aan GameActivity
 	* ![Alt text](start_sketch.jpg)
 	
 
