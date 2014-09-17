@@ -1,9 +1,10 @@
 The N-Puzzle
 ==========
+By: Hidde Hensel - 6379176
+Course: Native App Studio
 
-The N-Puzzle is an Android application based on the classic N-Puzzle game.
 
-
+*The N-Puzzle is an Android application based on the classic N-Puzzle game.*
 
 
 Features:
