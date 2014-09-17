@@ -52,7 +52,7 @@ Styleguide:
 
 Voor de programmeerstijl gebruik ik de Google Java Programming Guide, ook te vinden op https://google-styleguide.googlecode.com/svn/trunk/javaguide.html, met de volgende uitzonderingen:
 
-	Comments
+Comments
 -------------
 Comments van één regel worden als volgt gedaan:
 ```
