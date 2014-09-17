@@ -16,7 +16,7 @@ Features:
 *	To solve the puzzle, a user must tap a tile adjacent to this blank tile. This tile will then move to the blank space. 
 *	The app’s front side displays a simple game menu button. Clicking this will activate a menu and allow the user to reset the puzzle to a shuffled state, change the difficulty or quit the current game and pick another image.
 *	When a game is finished, the app displays either a fail or a win screen/popup.
-*	The app can run multiple games at the same time.
+*	The app can continue the game where you left off.
 
 
 
