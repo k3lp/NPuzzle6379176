@@ -3,7 +3,7 @@ N-Puzzle Concept
 
 
 
-Classes and methods:
+Activities:
 -------------
 * SplashActivity
 	* splashscreen
@@ -42,6 +42,8 @@ Classes and methods:
 	* Popup met tekst, knop gaat naar StartActivity
 	* ![Alt text](endgame_sketch.jpg)
 
+* Activity Sketch:
+	* ![Alt text](sketch.jpg)
 
 Databases:
 -------------
