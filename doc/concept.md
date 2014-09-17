@@ -24,6 +24,7 @@ Classes and methods:
 	* daarna wordt er 1 tile verwijderd en worden de tiles met elkaar pseudo random gewisseld
 	* heeft een button restart wat GameActivity opnieuw aanroept met de gekozen specificaties
 	* heeft een button menu die gaat naar MenuActivity
+	* gaat naar EndofgameActivity als alle tiles goed liggen
 	* ![Alt text](game_sketch.jpg)
 	
 	
