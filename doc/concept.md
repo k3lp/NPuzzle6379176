@@ -49,7 +49,10 @@ Databases:
 
 Styleguide:
 ==========
-Comments
+
+Voor de programmeerstijl gebruik ik de Google Java Programming Guide, ook te vinden op https://google-styleguide.googlecode.com/svn/trunk/javaguide.html, met de volgende uitzonderingen:
+
+	Comments
 -------------
 Comments van één regel worden als volgt gedaan:
 ```
@@ -62,8 +65,9 @@ Comments van meerdere regels worden anders gedaan:
  * Met meerdere regels.
  */
 ```
-Brackets
+Braces
 -------------
+Braces worden geopend op een new line en gesloten op een new line.
 ```
 int voorbeeld(int a)
 {
