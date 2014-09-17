@@ -19,8 +19,9 @@ Classes and methods:
 
 * GameActivity 	
 	* bestaat uit een deel met n tiles (3x3 of 4x4 of 5x5)
-	* Laat de puzzel voor 3 seconde correct zien
-	* daarna verwijder 1 tile en hussel de tiles met elkaar
+	* in deze tiles is de afbeelding (opgebroken in n delen) te zien
+	* de afgebroken afbeelding wordt voor 3 seconde correct getoond
+	* daarna wordt er 1 tile verwijderd en worden de tiles met elkaar pseudo random gewisseld
 	* heeft een button restart wat GameActivity opnieuw aanroept met de gekozen specificaties
 	* heeft een button menu die gaat naar MenuActivity
 	* ![Alt text](game_sketch.jpg)
