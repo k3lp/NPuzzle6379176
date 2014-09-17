@@ -43,7 +43,7 @@ Activities:
 	* ![Alt text](endgame_sketch.jpg)
 
 * Activity Sketch:
-	* ![Alt text](sketch.jpg)
+	* ![Alt text](sketch.png)
 
 Databases:
 -------------
