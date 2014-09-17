@@ -44,7 +44,7 @@ Classes and methods:
 
 Databases:
 -------------
-*	State wordt opgeslagen in shared preferences.
+*	State wordt opgeslagen m.b.h. een shared preferences object.
 
 
 Styleguide:
