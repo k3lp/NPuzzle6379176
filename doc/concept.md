@@ -18,7 +18,7 @@ Classes and methods:
 	
 
 * GameActivity 	
-	* bestaat uit een deel met n tiles (3x3. 4x4. 5x5)
+	* bestaat uit een deel met n tiles (3x3 of 4x4 of 5x5)
 	* Laat de puzzel voor 3 seconde correct zien
 	* daarna verwijder 1 tile en hussel de tiles met elkaar
 	* heeft een button restart wat GameActivity opnieuw aanroept met de gekozen specificaties
@@ -37,7 +37,7 @@ Classes and methods:
 	
 	
 * EndofgameActivity 
-	* Popup met tekst, knop gaat naar MainActivity
+	* Popup met tekst, knop gaat naar StartActivity
 	* ![Alt text](endgame_sketch.jpg)
 
 
