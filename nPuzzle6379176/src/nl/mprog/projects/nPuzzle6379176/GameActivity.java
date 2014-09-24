@@ -1,6 +1,7 @@
 package nl.mprog.projects.nPuzzle6379176;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -28,14 +29,16 @@ public class GameActivity extends Activity {
 		R.drawable.puzzle_8
 		//R.drawable.puzzle_9
 	};
+	public int moeilijkheid = 0, imgnr = 0;
+	
 	@Override
     public void onCreate(Bundle savedInstanceState)
     {
     	super.onCreate(savedInstanceState);
     	setContentView(R.layout.activity_game);
     	
-    	int moeilijkheid = getIntent().getExtras().getInt("moeilijkheid");
-    	int imgnr = getIntent().getExtras().getInt("imagebm");
+    	moeilijkheid = getIntent().getExtras().getInt("moeilijkheid");
+    	imgnr = getIntent().getExtras().getInt("imagebm");
     	
     	//vraag img op met imgnr
     	LinearLayout gallery1 = (LinearLayout)findViewById(R.id.gallery1);
@@ -105,5 +108,25 @@ public class GameActivity extends Activity {
 	      }   
 	    }
 		return subsample;
+	}
+	
+	
+	/*geef menu popup
+	public void toMenu(View view){
+		//stuur id van img mee en moeilijkheid
+		Intent intent = new Intent(this, MenuActivity.class);
+		intent.putExtra("imagebm", imgnr);
+		intent.putExtra("moeilijkheid", progressChanged);
+		startActivity(intent);
+	}*/
+	
+	//restart deze activity met moeilijkheid etc
+	public void toRestart(View view){
+		//stuur id van img mee en moeilijkheid
+		Intent intent = new Intent(this, GameActivity.class);
+		intent.putExtra("imagebm", imgnr);
+		intent.putExtra("moeilijkheid", moeilijkheid);
+		startActivity(intent);
+		finish();
 	}
 }

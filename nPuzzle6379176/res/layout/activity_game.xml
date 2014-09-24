@@ -30,13 +30,15 @@
             android:id="@+id/buttonRestart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Restart" />
+            android:text="Restart" 
+            android:onClick="toRestart"/>
 
         <Button
             android:id="@+id/buttonMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Menu" />
+            android:text="Menu" 
+            android:onClick="toMenu"/>
 
     </LinearLayout>
 
