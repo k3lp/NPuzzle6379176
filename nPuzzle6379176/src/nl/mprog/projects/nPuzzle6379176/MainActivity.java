@@ -32,7 +32,7 @@ public class MainActivity extends Activity
 		R.drawable.puzzle_8
 		//R.drawable.puzzle_9
 	};
-	public int progressChanged = 0, imgnr = 0;
+	public int progressChanged = 1, imgnr = 0;
 	private int reqHeight = 800, reqWidth = 800;
     @Override
     public void onCreate(Bundle savedInstanceState)
