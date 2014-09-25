@@ -9,16 +9,6 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"/>
-    <LinearLayout
-		android:id="@+id/gallery2"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"/>
-    <LinearLayout
-		android:id="@+id/gallery3"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"/>
     <TextView
         android:id="@+id/testMoeilijkheid"
         android:layout_width="wrap_content"
