@@ -27,6 +27,18 @@
 	        android:padding="5dip"	        
 	        android:layout_width="wrap_content"
 			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h14"
+	        android:gravity="right" 
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h15"
+	        android:gravity="right" 
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
 	</TableRow>
 	<TableRow
 		android:layout_width="wrap_content"
@@ -45,6 +57,18 @@
 	    <ImageView
 	        android:id="@+id/h23"
 	        android:gravity="right"
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h24"
+	        android:gravity="right" 
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h25"
+	        android:gravity="right" 
 	        android:padding="5dip"	        
 	        android:layout_width="wrap_content"
 			android:layout_height="wrap_content"/>
@@ -69,8 +93,85 @@
 	        android:padding="5dip"	        
 	        android:layout_width="wrap_content"
 			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h34"
+	        android:gravity="right" 
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h35"
+	        android:gravity="right" 
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
 	</TableRow>
-	
+	<TableRow
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+	    <ImageView
+	        android:id="@+id/h41"
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h42"
+	        android:gravity="right"
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h43"
+	        android:gravity="right"
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h44"
+	        android:gravity="right" 
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h45"
+	        android:gravity="right" 
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	</TableRow>
+		<TableRow
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+	    <ImageView
+	        android:id="@+id/h51"
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h52"
+	        android:gravity="right"
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h53"
+	        android:gravity="right"
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h54"
+	        android:gravity="right" 
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	    <ImageView
+	        android:id="@+id/h55"
+	        android:gravity="right" 
+	        android:padding="5dip"	        
+	        android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	</TableRow>
 
     <TextView
         android:id="@+id/testMoeilijkheid"
