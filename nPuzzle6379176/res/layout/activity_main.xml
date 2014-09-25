@@ -20,7 +20,7 @@
         android:id="@+id/textAfbeeldingNr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Afbeelding: 0" />
+        android:text="Afbeelding: 1" />
 
     <SeekBar
         android:id="@+id/sliderMoeilijkheid"

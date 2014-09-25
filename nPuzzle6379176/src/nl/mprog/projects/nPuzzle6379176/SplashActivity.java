@@ -5,37 +5,41 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 
-public class SplashActivity extends Activity {
+public class SplashActivity extends Activity
+{
     
     private Thread mSplashThread;    
-    
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         //layout
         setContentView(R.layout.activity_splash);
         final SplashActivity sPlashScreen = this;   
         mSplashThread =  new Thread(){
             @Override
-            public void run(){
-                try {
-                    synchronized(this){
+            public void run()
+            {
+                try
+                {
+                    synchronized(this)
+                    {
                         //timer splashscreen
-                        wait(5000);
+                        wait(3000);
                     }
                 }
-                catch(InterruptedException ex){                    
+                catch(InterruptedException ex)
+                {            
+                	
                 }
 
                 finish();
-                
                 //ga naar mainactivity
                 Intent intent = new Intent();
                 intent.setClass(sPlashScreen, MainActivity.class);
                 startActivity(intent);                 
             }
         };
-        
         mSplashThread.start();        
     }
         

@@ -1,7 +1,5 @@
 package nl.mprog.projects.nPuzzle6379176;
 
-import java.io.ByteArrayOutputStream;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -32,18 +30,18 @@ public class MainActivity extends Activity
 		R.drawable.puzzle_8
 		//R.drawable.puzzle_9
 	};
-	public int progressChanged = 1, imgnr = 0;
+	public int moeilijk = 1, imgnr = 0;
 	private int reqHeight = 800, reqWidth = 800;
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
     	super.onCreate(savedInstanceState);
     	setContentView(R.layout.activity_main);
-    	
+
         //maak gallery
         LinearLayout gallery1 = (LinearLayout)findViewById(R.id.gallery1);
         
-        //vul gallery imgs
+        //vul gallery met imgs
         for(int i=0;i<9;i++)
         {
         	gallery1.addView(addGallery(imageIds[i], i));
@@ -62,9 +60,8 @@ public class MainActivity extends Activity
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		//vul bitmap
 		bm = BitmapFactory.decodeResource(getResources(), imageId);
-		//resize bm, calc subsample
+		//maak bitmap kleiner anders lag
 		int subsample = resizeBitmap(bm);
-		
 	    options.inSampleSize = subsample;
 	    //maak bitmap met subsample
 	    bm2 = BitmapFactory.decodeResource(getResources(), imageId, options); 
@@ -77,7 +74,7 @@ public class MainActivity extends Activity
         //set img view voor bitmap
         ImageView imageView = new ImageView(getApplicationContext());
         imageView.setLayoutParams(new LayoutParams(reqHeight, reqWidth));
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        //imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setImageBitmap(bm2);
         
         //set onclick op afbeelding in gallery
@@ -87,7 +84,7 @@ public class MainActivity extends Activity
         	public void onClick(View v)
         	{
         		TextView tv = (TextView) findViewById(R.id.textAfbeeldingNr);
-        		tv.setText("Afbeelding: " + i);
+        		tv.setText("Gekozen Afbeelding: " + (i+1));
         		imgnr = i;
         	}
         });
@@ -96,6 +93,7 @@ public class MainActivity extends Activity
         return layout;
     }
 	
+
 	int resizeBitmap(Bitmap bm2)
 	{
 		//haal height/width van img
@@ -106,10 +104,10 @@ public class MainActivity extends Activity
 	    {
 	      if(bmwidth > bmheight)
 	      {
-	      	subsample = Math.round((float)bmheight / (float)reqHeight);   
+	      	subsample = (int) (bmheight/reqHeight);   
 	      } else 
 	      {
-	      	subsample = Math.round((float)bmwidth / (float)reqWidth);   
+	      	subsample = (int) (bmwidth/reqWidth);   
 	      }   
 	    }
 		return subsample;
@@ -123,24 +121,34 @@ public class MainActivity extends Activity
 			
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
 			{
-				progressChanged = progress;
+				moeilijk = progress;
 			}
 
 			public void onStartTrackingTouch(SeekBar seekBar)
 			{
+				TextView tv2 = (TextView) findViewById(R.id.textMoeilijkheid);
+        		if(moeilijk == 0)
+        		{
+            		tv2.setText("Moeilijkheid: Makkelijk");
+        		}else if(moeilijk == 1)
+        		{
+            		tv2.setText("Moeilijkheid: Normaal");
+        		}else
+        		{
+            		tv2.setText("Moeilijkheid: Moeilijk");
+        		}
 			}
 
 			public void onStopTrackingTouch(SeekBar seekBar)
 			{
         		TextView tv2 = (TextView) findViewById(R.id.textMoeilijkheid);
-        		if(progressChanged == 0)
+        		if(moeilijk == 0)
         		{
             		tv2.setText("Moeilijkheid: Makkelijk");
-        		}else if(progressChanged == 1)
+        		}else if(moeilijk == 1)
         		{
             		tv2.setText("Moeilijkheid: Normaal");
-        		}
-        		else
+        		}else
         		{
             		tv2.setText("Moeilijkheid: Moeilijk");
         		}
@@ -154,7 +162,7 @@ public class MainActivity extends Activity
 		//stuur id van img mee en moeilijkheid
 		Intent intent = new Intent(this, GameActivity.class);
 		intent.putExtra("imagebm", imgnr);
-		intent.putExtra("moeilijkheid", progressChanged);
+		intent.putExtra("moeilijkheid", moeilijk);
 		startActivity(intent);
 	}
 }
