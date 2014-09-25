@@ -226,7 +226,7 @@ import android.view.MenuItem;
 	}
 	
 	//restart deze activity met moeilijkheid etc
-	public void toRestart(MenuItem item)
+	public void toRestart(View v)
 	{
 		//stuur id van img mee en moeilijkheid
 		Intent intent = new Intent(this, GameActivity.class);
