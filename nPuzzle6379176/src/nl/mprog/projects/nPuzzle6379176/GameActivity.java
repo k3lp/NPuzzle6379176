@@ -1,5 +1,6 @@
 package nl.mprog.projects.nPuzzle6379176;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,11 +10,15 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.view.MenuItem;
 
-public class GameActivity extends Activity {
+@SuppressLint("NewApi") public class GameActivity extends Activity {
 	
 	private int reqHeight = 0, reqWidth = 0;
 	public Integer[] imageIds =
@@ -37,7 +42,7 @@ public class GameActivity extends Activity {
     	super.onCreate(savedInstanceState);
     	setContentView(R.layout.activity_game);
     	
-    	//krijg inf van intents
+    	//krijg info van intents
     	moeilijkheid = getIntent().getExtras().getInt("moeilijkheid");
     	imgnr = getIntent().getExtras().getInt("imagebm");
     	
@@ -51,7 +56,9 @@ public class GameActivity extends Activity {
         
         //scale bitmap met goede aspect
         Bitmap scaledimgbm = scaleBm(volimgbm);
-
+        //klaar met volimgbm, recycle
+        //volimgbm.recycle();
+        
     	//aantal tiles
     	int dimensieTiles = moeilijkheid + 3;
     	int aantalTiles = dimensieTiles * dimensieTiles;
@@ -81,9 +88,10 @@ public class GameActivity extends Activity {
     	{
     		maakStuks3(scaledimgbm);
     	}
+
     	
-    	
-    	
+    	//menubutton
+    	maakMenu();
     	
     	//debug moeilijkheid
     	TextView tv3 = (TextView) findViewById(R.id.testMoeilijkheid);
@@ -154,19 +162,72 @@ public class GameActivity extends Activity {
     	Bitmap stuk133 = Bitmap.createBitmap(scaledimgbm, 1,pt2+pt2,pt1,pt2);
     	Bitmap stuk233 = Bitmap.createBitmap(scaledimgbm, pt1,pt2+pt2,pt1,pt2);
     	Bitmap stuk333 = Bitmap.createBitmap(scaledimgbm, pt1*2,pt2+pt2,pt1,pt2);
+    	
+    	//klaar met volledige bm, recycle
+    	//scaledimgbm.recycle();
 	}
 	
-	/*geef menu popup
-	public void toMenu(View view){
+	
+	
+	//maak een menu bij de menubutton
+	void maakMenu()
+	{
+    	final Button buttonMenu = (Button) findViewById(R.id.buttonMenu);  
+        buttonMenu.setOnClickListener(new OnClickListener()
+        {  
+        	@Override  
+        	public void onClick(View v)
+        	{  
+        		PopupMenu popup = new PopupMenu(GameActivity.this, buttonMenu);
+        		popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu()); 
+        		popup.show();  
+        	}  
+        });
+	}
+	
+
+	
+	public void toStart(MenuItem item)
+	{
 		//stuur id van img mee en moeilijkheid
-		Intent intent = new Intent(this, MenuActivity.class);
-		intent.putExtra("imagebm", imgnr);
-		intent.putExtra("moeilijkheid", progressChanged);
+		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
-	}*/
+		finish();
+	}
+
+	
+	public void toMakkelijker(MenuItem item)
+	{
+		if(moeilijkheid != 0)
+		{
+			moeilijkheid -= 1;
+		}
+		//stuur id van img mee en moeilijkheid
+		Intent intent = new Intent(this, GameActivity.class);
+		intent.putExtra("imagebm", imgnr);
+		intent.putExtra("moeilijkheid", moeilijkheid);
+		startActivity(intent);
+		finish();
+	}
+
+	
+	public void toMoeilijker(MenuItem item)
+	{
+		if(moeilijkheid != 2)
+		{
+			moeilijkheid += 1;
+		}
+		//stuur id van img mee en moeilijkheid
+		Intent intent = new Intent(this, GameActivity.class);
+		intent.putExtra("imagebm", imgnr);
+		intent.putExtra("moeilijkheid", moeilijkheid);
+		startActivity(intent);
+		finish();
+	}
 	
 	//restart deze activity met moeilijkheid etc
-	public void toRestart(View view){
+	public void toRestart(MenuItem item)
+	{
 		//stuur id van img mee en moeilijkheid
 		Intent intent = new Intent(this, GameActivity.class);
 		intent.putExtra("imagebm", imgnr);

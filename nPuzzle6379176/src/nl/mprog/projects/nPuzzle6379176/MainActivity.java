@@ -164,5 +164,6 @@ public class MainActivity extends Activity
 		intent.putExtra("imagebm", imgnr);
 		intent.putExtra("moeilijkheid", moeilijk);
 		startActivity(intent);
+		finish();
 	}
 }
