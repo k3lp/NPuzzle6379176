@@ -7,7 +7,6 @@ import android.view.MotionEvent;
 
 public class SplashActivity extends Activity
 {
-    
     private Thread mSplashThread;    
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -16,7 +15,8 @@ public class SplashActivity extends Activity
         //layout
         setContentView(R.layout.activity_splash);
         final SplashActivity sPlashScreen = this;   
-        mSplashThread =  new Thread(){
+        mSplashThread =  new Thread()
+        {
             @Override
             public void run()
             {
@@ -30,9 +30,9 @@ public class SplashActivity extends Activity
                 }
                 catch(InterruptedException ex)
                 {            
-                	
+                    
                 }
-
+                int done = 1;
                 finish();
                 //ga naar mainactivity
                 Intent intent = new Intent();
@@ -42,14 +42,15 @@ public class SplashActivity extends Activity
         };
         mSplashThread.start();        
     }
-        
+
     //voor als je de splash eerder wilt stoppen (ontouch)
     @Override
     public boolean onTouchEvent(MotionEvent evt)
     {
         if(evt.getAction() == MotionEvent.ACTION_DOWN)
         {
-            synchronized(mSplashThread){
+            synchronized(mSplashThread)
+            {
                 mSplashThread.notifyAll();
             }
         }
