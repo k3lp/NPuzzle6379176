@@ -40,6 +40,7 @@ import android.view.MenuItem;
     public ImageView emptyTile;
     public int emptyTileRow;
     public int emptyTileColumn;
+    public int afterTimer;
     public Integer[][] tileIds =
     {
         {R.id.h11, R.id.h12, R.id.h13, R.id.h14, R.id.h15},
@@ -91,18 +92,19 @@ import android.view.MenuItem;
         emptyTile.setTag(2);
         emptyTileRow = 0;
         emptyTileColumn = 0;
+        afterTimer = 0;
         Runnable r = new Runnable()
         {
             @Override
             public void run()
             {
                 hussleTiles();
-                setOnclick();
+                afterTimer = 1;
             }
         };
         Handler h = new Handler();
         h.postDelayed(r, 3000);
-       
+
         //debug moeilijkheid
         TextView tv3 = (TextView) findViewById(R.id.testMoeilijkheid);
         tv3.setText("moeilijkheid: " + moeilijkheid);
@@ -171,12 +173,7 @@ import android.view.MenuItem;
         }
         //Bitmap bm=((BitmapDrawable)imageView.getDrawable()).getBitmap();
     }
-    void setOnclick()
-    {
-        
-        
-        //check na de click voor endgame
-    }
+
     void createTiles(Bitmap scaledimgbm, final Integer moeilijkheid)
     {
         //aantal tiles
@@ -218,7 +215,10 @@ import android.view.MenuItem;
                         @Override
                         public void onClick(View v)
                         {
-                            onClickTileMove(v);   
+                            if(afterTimer == 1)
+                            {
+                                onClickTileMove(v);
+                            }
                         }
                     });
                 }
@@ -263,7 +263,10 @@ import android.view.MenuItem;
                         @Override
                         public void onClick(View v)
                         {
-                            onClickTileMove(v);   
+                            if(afterTimer == 1)
+                            {
+                                onClickTileMove(v);
+                            }  
                         }
                     });
                 }
@@ -317,7 +320,10 @@ import android.view.MenuItem;
                         @Override
                         public void onClick(View v)
                         {
-                            onClickTileMove(v);   
+                            if(afterTimer == 1)
+                            {
+                                onClickTileMove(v);
+                            }   
                         }
                     });
                 }
