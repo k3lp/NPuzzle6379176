@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity 
 {
+    //ids van puzzle opslaan
     public Integer[] imageIds =
     {
         R.drawable.puzzle_0,
@@ -30,7 +31,7 @@ public class MainActivity extends Activity
         R.drawable.puzzle_8
         //R.drawable.puzzle_9
     };
-    public int moeilijk = 1, imgnr = 0;
+    public int difficulty = 1, imgnr = 0;
     private int reqHeight = 800, reqWidth = 800;
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -48,7 +49,7 @@ public class MainActivity extends Activity
         }
 
         //maak seekbar
-        maakSeek((SeekBar) findViewById(R.id.sliderMoeilijkheid));
+        initSeek((SeekBar) findViewById(R.id.sliderMoeilijkheid));
     }
 
     //gallery
@@ -93,10 +94,10 @@ public class MainActivity extends Activity
     }
 
 
-    int resizeBitmap(Bitmap bm2)
+    int resizeBitmap(Bitmap bm)
     {
         //haal height/width van img
-        int bmheight = bm2.getHeight(), bmwidth = bm2.getWidth();
+        int bmheight = bm.getHeight(), bmwidth = bm.getWidth();
         int subsample = 1;
         //bereken subsample
         if(bmheight > reqHeight || bmwidth > reqWidth)
@@ -112,39 +113,29 @@ public class MainActivity extends Activity
         return subsample;
     }
 
-    //seekbar
-    void maakSeek(SeekBar moeilijk1)
+    //initialiseer de seekbar voor moeilijkheid
+    void initSeek(SeekBar seekbar)
     {
-        moeilijk1.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
+        seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
         {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
             {
-                moeilijk = progress;
+                difficulty = progress;
             }
 
             public void onStartTrackingTouch(SeekBar seekBar)
             {
-                TextView tv2 = (TextView) findViewById(R.id.textMoeilijkheid);
-                if(moeilijk == 0)
-                {
-                    tv2.setText("Moeilijkheid: Makkelijk");
-                }else if(moeilijk == 1)
-                {
-                    tv2.setText("Moeilijkheid: Normaal");
-                }else
-                {
-                    tv2.setText("Moeilijkheid: Moeilijk");
-                }
+
             }
 
             public void onStopTrackingTouch(SeekBar seekBar)
             {
                 TextView tv2 = (TextView) findViewById(R.id.textMoeilijkheid);
-                if(moeilijk == 0)
+                if(difficulty == 0)
                 {
                     tv2.setText("Moeilijkheid: Makkelijk");
-                }else if(moeilijk == 1)
+                }else if(difficulty == 1)
                 {
                     tv2.setText("Moeilijkheid: Normaal");
                 }else
@@ -161,7 +152,7 @@ public class MainActivity extends Activity
         Intent intent = new Intent(this, GameActivity.class);
         //stuur id van img mee en moeilijkheid
         intent.putExtra("imagebm", imgnr);
-        intent.putExtra("moeilijkheid", moeilijk);
+        intent.putExtra("moeilijkheid", difficulty);
         startActivity(intent);
         finish();
     }
