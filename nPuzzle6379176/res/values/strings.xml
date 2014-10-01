@@ -4,5 +4,7 @@
     <string name="app_name">nPuzzle6379176</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-
+    <string name="endgame_title">Gefeliciteerd!</string>
+    <string name="endgame_text">Het spel is voltooid!</string>
+    <string name="endgame_button">Bedankt!</string>
 </resources>

@@ -4,6 +4,8 @@ import java.util.Random;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +14,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -49,8 +52,9 @@ import android.view.MenuItem;
         {R.id.h41, R.id.h42, R.id.h43, R.id.h44, R.id.h45},
         {R.id.h51, R.id.h52, R.id.h53, R.id.h54, R.id.h55}
     };
+
     
-    public int moeilijkheid = 0, imgnr = 0;
+    public int moeilijkheid = 0, imgnr = 0, dimensieTiles = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -64,6 +68,7 @@ import android.view.MenuItem;
 
         reqWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.8);
         reqHeight= (int) (getResources().getDisplayMetrics().widthPixels * 0.8);
+        dimensieTiles = moeilijkheid + 3;
         //maak bitmap van img     
         Bitmap volimgbm = BitmapFactory.decodeResource(getResources(), imageIds[imgnr]);
         //scale bitmap met goede aspect
@@ -74,18 +79,7 @@ import android.view.MenuItem;
         
         //maak tiles
         createTiles(scaledimgbm, moeilijkheid);
-        
-        //laat tiles even zien
-        /*try
-        {
-            synchronized(this)
-            {
-                wait(3000);
-            }
-        }
-        catch(InterruptedException ex)
-        {              
-        }*/
+
         //maak "lege" tile
         emptyTile = (ImageView) findViewById(tileIds[0][0]);
         emptyTile.setVisibility(View.INVISIBLE);
@@ -93,6 +87,8 @@ import android.view.MenuItem;
         emptyTileRow = 0;
         emptyTileColumn = 0;
         afterTimer = 0;
+        
+        //laat tiles even zien
         Runnable r = new Runnable()
         {
             @Override
@@ -176,8 +172,7 @@ import android.view.MenuItem;
 
     void createTiles(Bitmap scaledimgbm, final Integer moeilijkheid)
     {
-        //aantal tiles
-        int dimensieTiles = moeilijkheid + 3;
+
         //int aantalTiles = dimensieTiles * dimensieTiles;
 
 
@@ -187,7 +182,7 @@ import android.view.MenuItem;
         if(moeilijkheid == 0)
         {
             
-            Bitmap [][] bitmapTiles =
+            final Bitmap [][] bitmapTiles =
             {
                 //bitmap stukken boven
                 {Bitmap.createBitmap(scaledimgbm, 1,1,pt1,pt2),
@@ -210,6 +205,7 @@ import android.view.MenuItem;
                     ImageView imageTile;
                     imageTile = (ImageView) findViewById(tileIds[i][j]);
                     imageTile.setImageBitmap(bitmapTiles[i][j]);
+                    imageTile.setTag(bitmapTiles[i][j]);
                     imageTile.setOnClickListener(new OnClickListener()
                     {
                         @Override
@@ -218,6 +214,7 @@ import android.view.MenuItem;
                             if(afterTimer == 1)
                             {
                                 onClickTileMove(v);
+                                checkEndGame(bitmapTiles);
                             }
                         }
                     });
@@ -369,6 +366,58 @@ import android.view.MenuItem;
             }
         }
     }
+    
+    
+    void checkEndGame(Bitmap [][] bitmapTiles)
+    {
+        //staan alle bitmaps in volgorde
+        //kijk naar elke tileID welke bitmap erin staat
+        //vergelijk deze met bitmapTiles
+        //als gelijk dan is alles in volgorde en end game
+        //state opslaan met bitmapTiles id
+        //
+        int aantalTiles = dimensieTiles*dimensieTiles;
+        int count = 0;
+        for(int i = 0; i < dimensieTiles; i++)
+        {
+            for(int j = 0; j < dimensieTiles; j++)
+            {
+                ImageView viewChecked = (ImageView) findViewById(tileIds[i][j]);
+                Bitmap bitmapView = ((BitmapDrawable)viewChecked.getDrawable()).getBitmap();
+                Bitmap bitmapOriginalView = bitmapTiles[i][j];
+                if(bitmapView.sameAs(bitmapOriginalView))
+                {
+                    count++;
+                    System.out.println(aantalTiles-1);
+                    System.out.println(count);
+                }
+            }
+        }
+        if(count == (aantalTiles-1))
+        {
+            System.out.println(count);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.endgame_text);
+            builder.setTitle(R.string.endgame_title);
+            builder.setPositiveButton(R.string.endgame_button, 
+            new DialogInterface.OnClickListener()
+            {
+               @Override
+               public void onClick(DialogInterface arg0, int arg1)
+               {
+                   Intent intent = new Intent(GameActivity.this, MainActivity.class);
+                   startActivity(intent);
+                   finish();
+               }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+        
+    }
+    
+    
+    
     //maak een menu bij de menubutton
     void maakMenu()
     {
@@ -378,9 +427,12 @@ import android.view.MenuItem;
             @Override  
             public void onClick(View v)
             {  
-                PopupMenu popup = new PopupMenu(GameActivity.this, buttonMenu);
-                popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu()); 
-                popup.show();  
+                if(afterTimer == 1)
+                {
+                    PopupMenu popup = new PopupMenu(GameActivity.this, buttonMenu);
+                    popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu()); 
+                    popup.show();  
+                }
             }  
         });
     }
