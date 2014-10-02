@@ -6,7 +6,6 @@ import java.util.StringTokenizer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -57,7 +56,7 @@ import android.view.MenuItem;
     public int state = 0;
     public int restart = 0;
     public int afterTimer;
-    public int[][] stateTiles  = new int[2][25];
+    public int[][] stateTiles  = new int[2][50];
     public int[][] tileIds =
     {
         {R.id.h11, R.id.h12, R.id.h13, R.id.h14, R.id.h15},
@@ -84,9 +83,6 @@ import android.view.MenuItem;
         reqWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.8);
         reqHeight= (int) (getResources().getDisplayMetrics().widthPixels * 0.8);
         
-        //sharedpreferences
-
-        
         dimensieTiles = moeilijkheid + 3;
         
         //maak bitmap van img     
@@ -99,58 +95,29 @@ import android.view.MenuItem;
         
         settings = getSharedPreferences(MyPREFERENCES, 0);
         state = settings.getInt(State,0);
-        //Log.v("chingchong", "+STATE ONCREATE VOOR TILES+" + state);
-        
         
         if(state == 1)
         {
             //stateTiles vullen met tiles van eerdere state
             String savedString = settings.getString("string", "");
             StringTokenizer st = new StringTokenizer(savedString, ",");
-            Log.v("chingchong", "dit zit erin RESUME: " + savedString);
             if(savedString != null && !savedString.isEmpty())
             {
-                Log.v("chingchong", "+ ZIT IETS IN STRING +");
-                System.out.print("state");
-                //moet 50
-                for (int j = 0; j < 25; j++)
+                for (int j = 0; j < 50; j++)
                 {
                         stateTiles[1][j] = Integer.parseInt(st.nextToken());
                         stateTiles[0][j] = Integer.parseInt(st.nextToken());
-                        Log.v("onresumestring", ""+stateTiles[1][j]);
-                        Log.v("onresumestring", ""+stateTiles[0][j]);
                 }
             }
         }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         //maak tiles
         createTiles(scaledimgbm, moeilijkheid);
-
-        //maak "lege" tile
-
         afterTimer = 0;
-        
-        
         settings = getSharedPreferences(MyPREFERENCES, 0);
         state = settings.getInt(State,0);
-        //Log.v("chingchong", "+STATE ONCREATE NA TILES+" + state);
         if(state != 1)
         {
             emptyTile = (ImageView) findViewById(tileIds[0][0]);
-
-            //Log.v("sdfasdf", "STATE MOET 0 ZIJN"+ state);
             //laat tiles even zien
             Runnable r = new Runnable()
             {
@@ -166,7 +133,6 @@ import android.view.MenuItem;
         }
         else
         {
-           // Log.v("sdfasdf", "STATE MOET 1 ZIJN ELSE"+ state);
             afterTimer = 1;
         }
 
@@ -185,79 +151,31 @@ import android.view.MenuItem;
     public void onPause()
     {
         super.onPause();
-        Log.v("chingchong", "+ ON PAUSE +");
         settings = getSharedPreferences(MyPREFERENCES, 0);
         Editor editor = settings.edit();
         editor.clear();
-        //Log.v("chingchong", "+CLEAR ONPAUSE+");
-        //Log.v("chingchong", "+RESTAR = +" + restart);
         if(restart != 1)
         {
-            //Log.v("chingchong", "+RESTAR IN IF = +" + restart);
             editor.putInt(Moeilijkheid, moeilijkheid);
             editor.putInt(ImageNr, imgnr);
-            //Log.v("chingchong", "+ SET STATE+");
             editor.putInt(State, 1);
-            
-            
-            //Log.v("chingchong", "+state onpause+");
-            
+           
             String savedString = "";
-            
             
             StringBuilder str = new StringBuilder();
 
-            for (int j = 0; j < 25; j++)
+            for (int j = 0; j < 50; j++)
             {
                 str.append(stateTiles[1][j]).append(",");
                 str.append(stateTiles[0][j]).append(",");
-
-                //Log.v("onpausestring", str.toString());
                 savedString = str.toString();
             }
-            //String savedString = str.toString();
-
             editor.putString("string", savedString);
             editor.commit();
-            String test = settings.getString("string", "");
-            Log.v("chingchong", "dit zit erin onpause: " + test);
-            
-            //settings.edit().putString("string", str.toString());
-
-
         }
-
-        //Log.v("chingchong", "+ ON PAUSE +");
     }
 
     
-   /* @Override
-    public void onResume()
-    {
-        super.onResume();
-                Log.v("chingchong", "+ ON RESUME +");
-                settings = getSharedPreferences(MyPREFERENCES, 0);
-                
-                
-                //stateTiles vullen met tiles van eerdere state
-                String savedString = settings.getString("string", "");
-                StringTokenizer st = new StringTokenizer(savedString, ",");
-                Log.v("chingchong", "dit zit erin RESUME: " + savedString);
-                if(savedString != null && !savedString.isEmpty())
-                {
-                    Log.v("chingchong", "+ ZIT IETS IN STRING +");
-                    System.out.print("state");
-                    //moet 50
-                    for (int j = 0; j < 25; j++)
-                    {
-                            stateTiles[1][j] = Integer.parseInt(st.nextToken());
-                            stateTiles[0][j] = Integer.parseInt(st.nextToken());
-                            Log.v("onresumestring", ""+stateTiles[1][j]);
-                            Log.v("onresumestring", ""+stateTiles[0][j]);
-                    }
-                }
-
-    }*/
     
     
     Bitmap scaleBm(Bitmap volimgbm)
@@ -300,12 +218,6 @@ import android.view.MenuItem;
 
     void hussleTiles()
     {
-
-        //doe steeds random stap vanaf lege tile 
-        //vind positie lege tile
-        //probeer random of naar links
-        //of naar rechts of naar top of naar bot
-        //te gaan
         Random r = new Random();
         int count = 0, randj = 0, randi = 0;
         while(count < 1000)
@@ -317,23 +229,15 @@ import android.view.MenuItem;
             onClickTileMove(v);   
             count++;
         }
-        //Bitmap bm=((BitmapDrawable)imageView.getDrawable()).getBitmap();
     }
 
     void createTiles(Bitmap scaledimgbm, final Integer moeilijkheid)
     {
-
-        //int aantalTiles = dimensieTiles * dimensieTiles;
-
-
         int pt1 = (int)(scaledimgbm.getWidth()/dimensieTiles);
         int pt2 = (int)(scaledimgbm.getHeight()/dimensieTiles);
-        int statesCount = 0;
-        int stateX = 0;
-        int stateY = 0;
+
         if(moeilijkheid == 0)
         {
-            
             final Bitmap [][] bitmapTiles =
             {
                 //bitmap stukken boven
@@ -349,74 +253,7 @@ import android.view.MenuItem;
                 Bitmap.createBitmap(scaledimgbm, pt1,pt2+pt2,pt1,pt2),
                 Bitmap.createBitmap(scaledimgbm, pt1*2,pt2+pt2,pt1,pt2)}
             };
-            
-            for(int i = 0; i < dimensieTiles; i++)
-            {
-                for(int j = 0; j < dimensieTiles; j++)
-                {
-                    ImageView imageTile;
-                    imageTile = (ImageView) findViewById(tileIds[i][j]);
-                    if(state == 0)
-                    {
-                        if(i == 0 && j == 0)
-                        {
-                            imageTile.setImageBitmap(bitmapTiles[i][j]);
-                            imageTile.setTag(bitmapTiles[i][j]);  
-                            imageTile.setVisibility(View.INVISIBLE);
-                        }
-                        else
-                        {
-                            imageTile.setImageBitmap(bitmapTiles[i][j]);
-                            imageTile.setTag(bitmapTiles[i][j]);  
-                        }
-                    }
-                    else if(state == 1)
-                    {
-                        Log.v("chingchong", "dit zit in stateTiles: ");
-                        for(int p = 0; p < 25; p++)
-                        {
-                            Log.v("ditziterin creattiles", ""+stateTiles[0][p]);
-                            Log.v("ditziterin creattiles", ""+stateTiles[1][p]);
-                        }
-                        Log.v("sdfasdf", "STATE CREATETILES 1 "+ state);
-                        stateY = stateTiles[1][statesCount];
-                        stateX = stateTiles[0][statesCount];
-                        Log.v("sdfasdf", "STATE CREATETILES x"+ stateX);
-                        Log.v("sdfasdf", "STATE CREATETILES y"+ stateY);
-                        if(stateX < 0)
-                        {
-                            imageTile.setImageBitmap(bitmapTiles[stateX+6][stateY+6]);
-                            imageTile.setTag(bitmapTiles[stateX+6][stateY+6]);
-                            emptyTile = (ImageView) findViewById(tileIds[i][j]);
-                            emptyTileRow = i;
-                            emptyTileColumn = j;
-                            imageTile.setVisibility(View.INVISIBLE);
-                        }
-                        else{
-                            Log.v("sdfasdf", "STATE MOET 1 ZIJN"+ state);
-                            imageTile.setImageBitmap(bitmapTiles[stateX][stateY]);
-                            imageTile.setTag(bitmapTiles[stateX][stateY]);
-                        }
-
-                        statesCount++;
-                    }
-                    
-                    
-                    
-                    imageTile.setOnClickListener(new OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View v)
-                        {
-                            if(afterTimer == 1)
-                            {
-                                onClickTileMove(v);
-                                checkEndGame(bitmapTiles);
-                            }
-                        }
-                    });
-                }
-            }
+            createTilesFurther(bitmapTiles);
         }
         else if(moeilijkheid == 1)
         {
@@ -444,27 +281,7 @@ import android.view.MenuItem;
                 Bitmap.createBitmap(scaledimgbm, pt1*2,pt2*3,pt1,pt2),
                 Bitmap.createBitmap(scaledimgbm, pt1*3,pt2*3,pt1,pt2)}  
             };
-            
-            for(int i = 0; i < dimensieTiles; i++)
-            {
-                for(int j = 0; j < dimensieTiles; j++)
-                {
-                    ImageView imageTile;
-                    imageTile = (ImageView) findViewById(tileIds[i][j]);
-                    imageTile.setImageBitmap(bitmapTiles[i][j]);
-                    imageTile.setOnClickListener(new OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View v)
-                        {
-                            if(afterTimer == 1)
-                            {
-                                onClickTileMove(v);
-                            }  
-                        }
-                    });
-                }
-            }
+            createTilesFurther(bitmapTiles);
         }
         else if(moeilijkheid == 2)
         {
@@ -501,31 +318,73 @@ import android.view.MenuItem;
                 Bitmap.createBitmap(scaledimgbm, pt1*3,pt2*4,pt1,pt2),
                 Bitmap.createBitmap(scaledimgbm, pt1*4,pt2*4,pt1,pt2)}
             };
-            
-            for(int i = 0; i < dimensieTiles; i++)
-            {
-                for(int j = 0; j < dimensieTiles; j++)
-                {
-                    ImageView imageTile;
-                    imageTile = (ImageView) findViewById(tileIds[i][j]);
-                    imageTile.setImageBitmap(bitmapTiles[i][j]);
-                    imageTile.setOnClickListener(new OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View v)
-                        {
-                            if(afterTimer == 1)
-                            {
-                                onClickTileMove(v);
-                            }   
-                        }
-                    });
-                }
-            }
+            createTilesFurther(bitmapTiles);
         }
         
     }
+    
+    void createTilesFurther(Bitmap[][] bitmap)
+    {
+        final Bitmap[][] bitmapTiles = bitmap;
+        int statesCount = 0;
+        int stateX = 0;
+        int stateY = 0;
+        for(int i = 0; i < dimensieTiles; i++)
+        {
+            for(int j = 0; j < dimensieTiles; j++)
+            {
+                ImageView imageTile;
+                imageTile = (ImageView) findViewById(tileIds[i][j]);
+                if(state == 0)
+                {
+                    if(i == 0 && j == 0)
+                    {
+                        imageTile.setImageBitmap(bitmapTiles[i][j]);
+                        imageTile.setTag(bitmapTiles[i][j]);  
+                        imageTile.setVisibility(View.INVISIBLE);
+                    }
+                    else
+                    {
+                        imageTile.setImageBitmap(bitmapTiles[i][j]);
+                        imageTile.setTag(bitmapTiles[i][j]);  
+                    }
+                }
+                else if(state == 1)
+                {
+                    stateY = stateTiles[1][statesCount];
+                    stateX = stateTiles[0][statesCount];
+                    if(stateX < 0)
+                    {
+                        imageTile.setImageBitmap(bitmapTiles[stateX+6][stateY+6]);
+                        imageTile.setTag(bitmapTiles[stateX+6][stateY+6]);
+                        emptyTile = (ImageView) findViewById(tileIds[i][j]);
+                        emptyTileRow = i;
+                        emptyTileColumn = j;
+                        imageTile.setVisibility(View.INVISIBLE);
+                    }
+                    else
+                    {
+                        imageTile.setImageBitmap(bitmapTiles[stateX][stateY]);
+                        imageTile.setTag(bitmapTiles[stateX][stateY]);
+                    }
 
+                    statesCount++;
+                }
+                imageTile.setOnClickListener(new OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        if(afterTimer == 1)
+                        {
+                            onClickTileMove(v);
+                            checkEndGame(bitmapTiles);
+                        }
+                    }
+                });
+            }
+        }
+    }
     void onClickTileMove(View v)
     {
         int x = -1, y= -1;
@@ -588,7 +447,6 @@ import android.view.MenuItem;
                 {
                     count++;
                 }
-                //System.out.println(count);
                 //loop voor state
                 for(int k = 0; k < dimensieTiles; k++)
                 {
@@ -611,11 +469,6 @@ import android.view.MenuItem;
                 tileCount++;
             }
         }
-        /*for(int m = 0; m < 9; m++)
-        {
-                    System.out.println(stateTiles[0][m]);
-                    System.out.println(stateTiles[1][m]);
-        }*/
         if(count == (aantalTiles-1))
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -627,12 +480,12 @@ import android.view.MenuItem;
                @Override
                public void onClick(DialogInterface arg0, int arg1)
                {
+                   restart = 1;
                    settings = getSharedPreferences(MyPREFERENCES, 0);
-                   Editor editor = settings.edit().clear();
-                   //Log.v("chingchong", "+CLEAR CLEAR+");
-                   // Necessary to clear first if we save preferences onPause. 
+                   Editor editor = settings.edit();
                    editor.clear();
-                   //Log.v("chingchong", "+CLEAR CLEAR CLEAR+");
+                   editor.putInt(State, 0);
+                   editor.commit();
                    Intent intent = new Intent(GameActivity.this, MainActivity.class);
                    startActivity(intent);
                    finish();
@@ -668,18 +521,12 @@ import android.view.MenuItem;
 
     public void toStart(MenuItem item)
     {
-        
         restart = 1;
         settings = getSharedPreferences(MyPREFERENCES, 0);
         Editor editor = settings.edit();
         editor.clear();
-        //Log.v("chingchong", "+ CLEAR TOSTART+");
         editor.putInt(State, 0);
-        //Log.v("chingchong", "+ SET STATE RESTART+");
         editor.commit();
-        int test = settings.getInt(State,0);
-        //Log.v("chingchong", "+ ON TOSTART +");
-        System.out.println(test);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
@@ -688,6 +535,12 @@ import android.view.MenuItem;
 
     public void toMakkelijker(MenuItem item)
     {
+        restart = 1;
+        settings = getSharedPreferences(MyPREFERENCES, 0);
+        Editor editor = settings.edit();
+        editor.clear();
+        editor.putInt(State, 0);
+        editor.commit();
         if(moeilijkheid != 0)
         {
             moeilijkheid -= 1;
@@ -703,6 +556,12 @@ import android.view.MenuItem;
 
     public void toMoeilijker(MenuItem item)
     {
+        restart = 1;
+        settings = getSharedPreferences(MyPREFERENCES, 0);
+        Editor editor = settings.edit();
+        editor.clear();
+        editor.putInt(State, 0);
+        editor.commit();
         if(moeilijkheid != 2)
         {
             moeilijkheid += 1;
@@ -719,6 +578,12 @@ import android.view.MenuItem;
     //restart deze activity met moeilijkheid etc
     public void toRestart(View v)
     {
+        restart = 1;
+        settings = getSharedPreferences(MyPREFERENCES, 0);
+        Editor editor = settings.edit();
+        editor.clear();
+        editor.putInt(State, 0);
+        editor.commit();
         //stuur id van img mee en moeilijkheid
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra("imagebm", imgnr);
