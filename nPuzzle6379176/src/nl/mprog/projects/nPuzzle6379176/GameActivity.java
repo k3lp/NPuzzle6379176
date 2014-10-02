@@ -87,37 +87,38 @@ import android.view.MenuItem;
         reqHeight= (int) (getResources().getDisplayMetrics().widthPixels * scaleDisplayMetrics);
 
         dimensionTiles = difficulty + 3;
-        Bitmap volimgbm = null;
+        Bitmap fullImageBitmap = null;
         final BitmapFactory.Options options = new BitmapFactory.Options();
+        
         //maak bitmap van img     
         try
         {
-            volimgbm = BitmapFactory.decodeResource(getResources(), imageIds[imagenumber]);
+            fullImageBitmap = BitmapFactory.decodeResource(getResources(), imageIds[imagenumber]);
         }
         catch(OutOfMemoryError e)
         {
             options.inSampleSize = 1;
             try
             {
-                volimgbm = BitmapFactory.decodeResource(getResources(), imageIds[imagenumber], options); 
+                fullImageBitmap = BitmapFactory.decodeResource(getResources(), imageIds[imagenumber], options); 
             }
             catch(OutOfMemoryError e2)
             {
                 options.inSampleSize *= 2;
                 try
                 {
-                    volimgbm = BitmapFactory.decodeResource(getResources(), imageIds[imagenumber], options);   
+                    fullImageBitmap = BitmapFactory.decodeResource(getResources(), imageIds[imagenumber], options);   
                 }
                 catch(OutOfMemoryError e3)
                 {
                         options.inSampleSize *= 2;
-                        volimgbm = BitmapFactory.decodeResource(getResources(), imageIds[imagenumber], options);   
+                        fullImageBitmap = BitmapFactory.decodeResource(getResources(), imageIds[imagenumber], options);   
                 }
             }
         }
         
         //scale bitmap met goede aspect
-        Bitmap scaledimgbm = scaleBm(volimgbm);
+        Bitmap scaledImageBitmap = scaleBm(fullImageBitmap);
 
         //menubutton
         maakMenu();
@@ -140,7 +141,7 @@ import android.view.MenuItem;
             }
         }
         //maak tiles
-        createBitmapPieces(scaledimgbm, difficulty);
+        createBitmapPieces(scaledImageBitmap, difficulty);
         afterTimer = 0;
         settings = getSharedPreferences(MyPREFERENCES, 0);
         state = settings.getInt(State,0);
@@ -200,40 +201,40 @@ import android.view.MenuItem;
 
 
 
-    public Bitmap scaleBm(Bitmap volimgbm)
+    public Bitmap scaleBm(Bitmap bitmap)
     {
-        int volimgbmWidth = volimgbm.getWidth(), volimgbmHeight = volimgbm.getHeight();
+        int fullImageBitmapWidth = bitmap.getWidth(), fullImageBitmapHeight = bitmap.getHeight();
         float scale;
         //scale x en y !met aspect behouden!
-        float scaledimgbmx = (float) reqWidth / volimgbmWidth;
-        float scaledimgbmy = (float) reqHeight / volimgbmHeight;
+        float scaledImageBitmapx = (float) reqWidth / fullImageBitmapWidth;
+        float scaledImageBitmapy = (float) reqHeight / fullImageBitmapHeight;
 
         //kijk welke dimensie het grootst is
-        if(scaledimgbmx > scaledimgbmy)
+        if(scaledImageBitmapx > scaledImageBitmapy)
         {
-            scale = scaledimgbmx;
+            scale = scaledImageBitmapx;
         } else
         {
-            scale = scaledimgbmy;
+            scale = scaledImageBitmapy;
         }
 
         //scale
-        float scaledWidth = scale * volimgbmWidth;
-        float scaledHeight = scale * volimgbmHeight;
+        float scaledWidth = scale * fullImageBitmapWidth;
+        float scaledHeight = scale * fullImageBitmapHeight;
 
         //pak linksboven punt in het midden  
         float puntx = (reqWidth - scaledWidth) / 2;
         float punty = (reqHeight - scaledHeight) / 2;
 
-        //snijd vierkant uit te grote gescalede bm
+        //snijdt vierkant uit te grote gescalede bitmap
         RectF vierkant = new RectF(puntx, punty, puntx + scaledWidth, punty + scaledHeight);
 
-        //maak bm van vierkant
-        Bitmap scaledbm = Bitmap.createBitmap(reqWidth, reqHeight, volimgbm.getConfig());
-        Canvas canvas = new Canvas(scaledbm);
-        canvas.drawBitmap(volimgbm, null, vierkant, null);
+        //maak bitmap van vierkant
+        Bitmap scaledBitmap = Bitmap.createBitmap(reqWidth, reqHeight, bitmap.getConfig());
+        Canvas canvas = new Canvas(scaledBitmap);
+        canvas.drawBitmap(bitmap, null, vierkant, null);
 
-        return scaledbm;
+        return scaledBitmap;
 
     }
 
@@ -244,7 +245,7 @@ import android.view.MenuItem;
     {
         Random r = new Random();
         int count = 0, randj = 0, randi = 0;
-        while(count < 1000)
+        while(count < 2000)
         {
             randj = r.nextInt(dimensionTiles);
             randi = r.nextInt(dimensionTiles);
@@ -258,27 +259,27 @@ import android.view.MenuItem;
     
     
     
-    public void createBitmapPieces(Bitmap scaledimgbm, final Integer difficulty)
+    public void createBitmapPieces(Bitmap bitmap, final Integer difficulty)
     {
-        int pt1 = (int)(scaledimgbm.getWidth()/dimensionTiles);
-        int pt2 = (int)(scaledimgbm.getHeight()/dimensionTiles);
+        int pt1 = (int)(bitmap.getWidth()/dimensionTiles);
+        int pt2 = (int)(bitmap.getHeight()/dimensionTiles);
 
         if(difficulty == 0)
         {
             final Bitmap [][] bitmapTiles =
                 {
                 //bitmap stukken boven
-                {Bitmap.createBitmap(scaledimgbm, 1,1,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1,1,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*2,1,pt1,pt2)},
+                {Bitmap.createBitmap(bitmap, 1,1,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1,1,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*2,1,pt1,pt2)},
                 //bitmaps stukken midden
-                {Bitmap.createBitmap(scaledimgbm, 1,pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1,pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*2,pt2,pt1,pt2)},
+                {Bitmap.createBitmap(bitmap, 1,pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1,pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*2,pt2,pt1,pt2)},
                 //bitmaps stukken onder
-                {Bitmap.createBitmap(scaledimgbm, 1,pt2+pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1,pt2+pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*2,pt2+pt2,pt1,pt2)}
+                {Bitmap.createBitmap(bitmap, 1,pt2+pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1,pt2+pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*2,pt2+pt2,pt1,pt2)}
                 };
             createTiles(bitmapTiles);
         }
@@ -288,25 +289,25 @@ import android.view.MenuItem;
             Bitmap [][] bitmapTiles =
                 {
                 //bitmap stukken boven
-                {Bitmap.createBitmap(scaledimgbm, 1,1,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1,1,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*2,1,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*3,1,pt1,pt2)},
+                {Bitmap.createBitmap(bitmap, 1,1,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1,1,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*2,1,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*3,1,pt1,pt2)},
                 //bitmaps stukken midden
-                {Bitmap.createBitmap(scaledimgbm, 1,pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1,pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*2,pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*3,pt2,pt1,pt2)},
+                {Bitmap.createBitmap(bitmap, 1,pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1,pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*2,pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*3,pt2,pt1,pt2)},
                 //bitmaps stukken onder
-                {Bitmap.createBitmap(scaledimgbm, 1,pt2+pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1,pt2+pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*2,pt2+pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*3,pt2*2,pt1,pt2)},
+                {Bitmap.createBitmap(bitmap, 1,pt2+pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1,pt2+pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*2,pt2+pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*3,pt2*2,pt1,pt2)},
                 
-                {Bitmap.createBitmap(scaledimgbm, 1,pt2*3,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1,pt2*3,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*2,pt2*3,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*3,pt2*3,pt1,pt2)}  
+                {Bitmap.createBitmap(bitmap, 1,pt2*3,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1,pt2*3,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*2,pt2*3,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*3,pt2*3,pt1,pt2)}  
                 };
             createTiles(bitmapTiles);
         }
@@ -315,35 +316,35 @@ import android.view.MenuItem;
             
             Bitmap [][] bitmapTiles =
                 {
-                {Bitmap.createBitmap(scaledimgbm, 1,1,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1,1,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*2,1,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*3,1,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*4,1,pt1,pt2)},
+                {Bitmap.createBitmap(bitmap, 1,1,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1,1,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*2,1,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*3,1,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*4,1,pt1,pt2)},
 
-                {Bitmap.createBitmap(scaledimgbm, 1,pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1,pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*2,pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*3,pt2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*4,pt2,pt1,pt2)},
+                {Bitmap.createBitmap(bitmap, 1,pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1,pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*2,pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*3,pt2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*4,pt2,pt1,pt2)},
 
-                {Bitmap.createBitmap(scaledimgbm, 1,pt2*2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1,pt2*2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*2,pt2*2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*3,pt2*2,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*4,pt2*2,pt1,pt2)},
+                {Bitmap.createBitmap(bitmap, 1,pt2*2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1,pt2*2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*2,pt2*2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*3,pt2*2,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*4,pt2*2,pt1,pt2)},
 
-                {Bitmap.createBitmap(scaledimgbm, 1,pt2*3,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1,pt2*3,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*2,pt2*3,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*3,pt2*3,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*4,pt2*3,pt1,pt2)},
+                {Bitmap.createBitmap(bitmap, 1,pt2*3,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1,pt2*3,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*2,pt2*3,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*3,pt2*3,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*4,pt2*3,pt1,pt2)},
 
-                {Bitmap.createBitmap(scaledimgbm, 1,pt2*4,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1,pt2*4,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*2,pt2*4,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*3,pt2*4,pt1,pt2),
-                Bitmap.createBitmap(scaledimgbm, pt1*4,pt2*4,pt1,pt2)}
+                {Bitmap.createBitmap(bitmap, 1,pt2*4,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1,pt2*4,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*2,pt2*4,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*3,pt2*4,pt1,pt2),
+                Bitmap.createBitmap(bitmap, pt1*4,pt2*4,pt1,pt2)}
                 };
             createTiles(bitmapTiles);
         }
@@ -359,6 +360,7 @@ import android.view.MenuItem;
         int statesCount = 0;
         int stateX = 0;
         int stateY = 0;
+        int offsetEmptyTile = 6;
         for(int i = 0; i < dimensionTiles; i++)
         {
             for(int j = 0; j < dimensionTiles; j++)
@@ -385,8 +387,8 @@ import android.view.MenuItem;
                     stateX = stateTiles[0][statesCount];
                     if(stateX < 0)
                     {
-                        imageTile.setImageBitmap(bitmapTiles[stateX+6][stateY+6]);
-                        imageTile.setTag(bitmapTiles[stateX+6][stateY+6]);
+                        imageTile.setImageBitmap(bitmapTiles[stateX+offsetEmptyTile][stateY+offsetEmptyTile]);
+                        imageTile.setTag(bitmapTiles[stateX+offsetEmptyTile][stateY+offsetEmptyTile]);
                         emptyTile = (ImageView) findViewById(tileIds[i][j]);
                         emptyTileRow = i;
                         emptyTileColumn = j;
@@ -460,7 +462,7 @@ import android.view.MenuItem;
 
     
     
-    public void checkEndGame(Bitmap [][] bitmapTiles)
+    public void checkEndGame(Bitmap [][] bitmapArray)
     {
         //staan alle bitmaps in volgorde
         //kijk naar elke tileID welke bitmap erin staat
@@ -471,13 +473,14 @@ import android.view.MenuItem;
         int aantalTiles = dimensionTiles*dimensionTiles;
         int count = 0;
         int tileCount = 0;
+        int offsetEmptyTile = 6;
         for(int i = 0; i < dimensionTiles; i++)
         {
             for(int j = 0; j < dimensionTiles; j++)
             {
                 ImageView viewChecked = (ImageView) findViewById(tileIds[i][j]);
                 Bitmap bitmapView = ((BitmapDrawable)viewChecked.getDrawable()).getBitmap();
-                Bitmap bitmapOriginalView = bitmapTiles[i][j];
+                Bitmap bitmapOriginalView = bitmapArray[i][j];
 
                 if(bitmapView.sameAs(bitmapOriginalView))
                 {
@@ -488,7 +491,7 @@ import android.view.MenuItem;
                 {
                     for(int l = 0; l < dimensionTiles; l++)
                     {
-                        bitmapOriginalView = bitmapTiles[k][l];
+                        bitmapOriginalView = bitmapArray[k][l];
                         if(bitmapView.sameAs(bitmapOriginalView))
                         {
                             stateTiles[0][tileCount]= k;
@@ -497,8 +500,8 @@ import android.view.MenuItem;
                         //als het de lege tile is
                         if(viewChecked.getVisibility() == View.INVISIBLE)
                         {
-                            stateTiles[0][tileCount]= k-6;
-                            stateTiles[1][tileCount] = l-6;
+                            stateTiles[0][tileCount]= k-offsetEmptyTile;
+                            stateTiles[1][tileCount] = l-offsetEmptyTile;
                         }
                     }
                 }
