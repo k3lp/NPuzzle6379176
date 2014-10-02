@@ -2,7 +2,6 @@ package nl.mprog.projects.nPuzzle6379176;
 
 import java.util.Random;
 import java.util.StringTokenizer;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,7 +16,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -29,27 +27,31 @@ import android.view.MenuItem;
 @SuppressLint("NewApi") public class GameActivity extends Activity
 {
 
-    
+
     public static final String MyPREFERENCES = "MyPrefs" ;
     public static final String Moeilijkheid = "moeilijkheid"; 
     public static final String ImageNr = "imagenr";
     public static final String State = "state";
+    public static final String Array = "array";
+
     SharedPreferences settings;
-    
-    private int reqHeight = 0, reqWidth = 0;
-    public Integer[] imageIds =
-    {
-        R.drawable.puzzle_0,
-        R.drawable.puzzle_1,
-        R.drawable.puzzle_2,
-        R.drawable.puzzle_3,
-        R.drawable.puzzle_4,
-        R.drawable.puzzle_5,
-        R.drawable.puzzle_6,
-        R.drawable.puzzle_7,
-        R.drawable.puzzle_8
-        //R.drawable.puzzle_9
-    };
+
+    public int reqHeight = 0, reqWidth = 0;
+
+    public int[] imageIds =
+        {
+            R.drawable.puzzle_0,
+            R.drawable.puzzle_1,
+            R.drawable.puzzle_2,
+            R.drawable.puzzle_3,
+            R.drawable.puzzle_4,
+            R.drawable.puzzle_5,
+            R.drawable.puzzle_6,
+            R.drawable.puzzle_7,
+            R.drawable.puzzle_8
+            //R.drawable.puzzle_9
+        };
+
     public ImageView emptyTile;
     public int emptyTileRow = 0;
     public int emptyTileColumn = 0;
@@ -57,16 +59,17 @@ import android.view.MenuItem;
     public int restart = 0;
     public int afterTimer;
     public int[][] stateTiles  = new int[2][50];
-    public int[][] tileIds =
-    {
-        {R.id.h11, R.id.h12, R.id.h13, R.id.h14, R.id.h15},
-        {R.id.h21, R.id.h22, R.id.h23, R.id.h24, R.id.h25},
-        {R.id.h31, R.id.h32, R.id.h33, R.id.h34, R.id.h35},
-        {R.id.h41, R.id.h42, R.id.h43, R.id.h44, R.id.h45},
-        {R.id.h51, R.id.h52, R.id.h53, R.id.h54, R.id.h55}
-    };
 
-    
+    public int[][] tileIds =
+        {
+            {R.id.h11, R.id.h12, R.id.h13, R.id.h14, R.id.h15},
+            {R.id.h21, R.id.h22, R.id.h23, R.id.h24, R.id.h25},
+            {R.id.h31, R.id.h32, R.id.h33, R.id.h34, R.id.h35},
+            {R.id.h41, R.id.h42, R.id.h43, R.id.h44, R.id.h45},
+            {R.id.h51, R.id.h52, R.id.h53, R.id.h54, R.id.h55}
+        };
+
+
     public int moeilijkheid = 0, imgnr = 0, dimensieTiles = 0;
 
     @Override
@@ -82,20 +85,20 @@ import android.view.MenuItem;
 
         reqWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.8);
         reqHeight= (int) (getResources().getDisplayMetrics().widthPixels * 0.8);
-        
+
         dimensieTiles = moeilijkheid + 3;
-        
+
         //maak bitmap van img     
         Bitmap volimgbm = BitmapFactory.decodeResource(getResources(), imageIds[imgnr]);
         //scale bitmap met goede aspect
         Bitmap scaledimgbm = scaleBm(volimgbm);
-        
+
         //menubutton
         maakMenu();
-        
+
         settings = getSharedPreferences(MyPREFERENCES, 0);
         state = settings.getInt(State,0);
-        
+
         if(state == 1)
         {
             //stateTiles vullen met tiles van eerdere state
@@ -105,13 +108,13 @@ import android.view.MenuItem;
             {
                 for (int j = 0; j < 50; j++)
                 {
-                        stateTiles[1][j] = Integer.parseInt(st.nextToken());
-                        stateTiles[0][j] = Integer.parseInt(st.nextToken());
+                    stateTiles[1][j] = Integer.parseInt(st.nextToken());
+                    stateTiles[0][j] = Integer.parseInt(st.nextToken());
                 }
             }
         }
         //maak tiles
-        createTiles(scaledimgbm, moeilijkheid);
+        createBitmapPieces(scaledimgbm, moeilijkheid);
         afterTimer = 0;
         settings = getSharedPreferences(MyPREFERENCES, 0);
         state = settings.getInt(State,0);
@@ -144,9 +147,9 @@ import android.view.MenuItem;
         tv4.setText("imgnr: " + (imgnr+1));
     }
 
-    
-    
-    
+
+
+
     @Override
     public void onPause()
     {
@@ -159,9 +162,9 @@ import android.view.MenuItem;
             editor.putInt(Moeilijkheid, moeilijkheid);
             editor.putInt(ImageNr, imgnr);
             editor.putInt(State, 1);
-           
+
             String savedString = "";
-            
+
             StringBuilder str = new StringBuilder();
 
             for (int j = 0; j < 50; j++)
@@ -175,10 +178,10 @@ import android.view.MenuItem;
         }
     }
 
-    
-    
-    
-    Bitmap scaleBm(Bitmap volimgbm)
+
+
+
+    public Bitmap scaleBm(Bitmap volimgbm)
     {
         int volimgbmWidth = volimgbm.getWidth(), volimgbmHeight = volimgbm.getHeight();
         float scale;
@@ -216,7 +219,7 @@ import android.view.MenuItem;
     }
 
 
-    void hussleTiles()
+    public void hussleTiles()
     {
         Random r = new Random();
         int count = 0, randj = 0, randi = 0;
@@ -231,7 +234,7 @@ import android.view.MenuItem;
         }
     }
 
-    void createTiles(Bitmap scaledimgbm, final Integer moeilijkheid)
+    public void createBitmapPieces(Bitmap scaledimgbm, final Integer moeilijkheid)
     {
         int pt1 = (int)(scaledimgbm.getWidth()/dimensieTiles);
         int pt2 = (int)(scaledimgbm.getHeight()/dimensieTiles);
@@ -239,7 +242,7 @@ import android.view.MenuItem;
         if(moeilijkheid == 0)
         {
             final Bitmap [][] bitmapTiles =
-            {
+                {
                 //bitmap stukken boven
                 {Bitmap.createBitmap(scaledimgbm, 1,1,pt1,pt2),
                 Bitmap.createBitmap(scaledimgbm, pt1,1,pt1,pt2),
@@ -252,14 +255,14 @@ import android.view.MenuItem;
                 {Bitmap.createBitmap(scaledimgbm, 1,pt2+pt2,pt1,pt2),
                 Bitmap.createBitmap(scaledimgbm, pt1,pt2+pt2,pt1,pt2),
                 Bitmap.createBitmap(scaledimgbm, pt1*2,pt2+pt2,pt1,pt2)}
-            };
-            createTilesFurther(bitmapTiles);
+                };
+            createTiles(bitmapTiles);
         }
         else if(moeilijkheid == 1)
         {
             
             Bitmap [][] bitmapTiles =
-            {
+                {
                 //bitmap stukken boven
                 {Bitmap.createBitmap(scaledimgbm, 1,1,pt1,pt2),
                 Bitmap.createBitmap(scaledimgbm, pt1,1,pt1,pt2),
@@ -280,14 +283,14 @@ import android.view.MenuItem;
                 Bitmap.createBitmap(scaledimgbm, pt1,pt2*3,pt1,pt2),
                 Bitmap.createBitmap(scaledimgbm, pt1*2,pt2*3,pt1,pt2),
                 Bitmap.createBitmap(scaledimgbm, pt1*3,pt2*3,pt1,pt2)}  
-            };
-            createTilesFurther(bitmapTiles);
+                };
+            createTiles(bitmapTiles);
         }
         else if(moeilijkheid == 2)
         {
             
             Bitmap [][] bitmapTiles =
-            {
+                {
                 {Bitmap.createBitmap(scaledimgbm, 1,1,pt1,pt2),
                 Bitmap.createBitmap(scaledimgbm, pt1,1,pt1,pt2),
                 Bitmap.createBitmap(scaledimgbm, pt1*2,1,pt1,pt2),
@@ -317,13 +320,13 @@ import android.view.MenuItem;
                 Bitmap.createBitmap(scaledimgbm, pt1*2,pt2*4,pt1,pt2),
                 Bitmap.createBitmap(scaledimgbm, pt1*3,pt2*4,pt1,pt2),
                 Bitmap.createBitmap(scaledimgbm, pt1*4,pt2*4,pt1,pt2)}
-            };
-            createTilesFurther(bitmapTiles);
+                };
+            createTiles(bitmapTiles);
         }
         
     }
-    
-    void createTilesFurther(Bitmap[][] bitmap)
+
+    public void createTiles(Bitmap[][] bitmap)
     {
         final Bitmap[][] bitmapTiles = bitmap;
         int statesCount = 0;
@@ -385,7 +388,7 @@ import android.view.MenuItem;
             }
         }
     }
-    void onClickTileMove(View v)
+    public void onClickTileMove(View v)
     {
         int x = -1, y= -1;
         //als het niet de "lege" tile is
@@ -405,12 +408,12 @@ import android.view.MenuItem;
             }
             //kijk of lege tile eromheen is
             if(x-1 == emptyTileRow && y == emptyTileColumn ||
-               x+1 == emptyTileRow && y == emptyTileColumn ||
-               x == emptyTileRow && y-1 == emptyTileColumn ||
-               x == emptyTileRow && y+1 == emptyTileColumn)
+                    x+1 == emptyTileRow && y == emptyTileColumn ||
+                    x == emptyTileRow && y-1 == emptyTileColumn ||
+                    x == emptyTileRow && y+1 == emptyTileColumn)
             {
                 //wissel views om
-                
+
                 ImageView imageClicked = (ImageView) findViewById(tileIds[x][y]);
                 Bitmap bitmap = ((BitmapDrawable)imageClicked.getDrawable()).getBitmap();
                 emptyTile.setImageBitmap(bitmap);
@@ -422,9 +425,9 @@ import android.view.MenuItem;
             }
         }
     }
-    
-    
-    void checkEndGame(Bitmap [][] bitmapTiles)
+
+
+    public void checkEndGame(Bitmap [][] bitmapTiles)
     {
         //staan alle bitmaps in volgorde
         //kijk naar elke tileID welke bitmap erin staat
@@ -475,32 +478,32 @@ import android.view.MenuItem;
             builder.setMessage(R.string.endgame_text);
             builder.setTitle(R.string.endgame_title);
             builder.setPositiveButton(R.string.endgame_button, 
-            new DialogInterface.OnClickListener()
+                    new DialogInterface.OnClickListener()
             {
-               @Override
-               public void onClick(DialogInterface arg0, int arg1)
-               {
-                   restart = 1;
-                   settings = getSharedPreferences(MyPREFERENCES, 0);
-                   Editor editor = settings.edit();
-                   editor.clear();
-                   editor.putInt(State, 0);
-                   editor.commit();
-                   Intent intent = new Intent(GameActivity.this, MainActivity.class);
-                   startActivity(intent);
-                   finish();
-               }
+                @Override
+                public void onClick(DialogInterface arg0, int arg1)
+                {
+                    restart = 1;
+                    settings = getSharedPreferences(MyPREFERENCES, 0);
+                    Editor editor = settings.edit();
+                    editor.clear();
+                    editor.putInt(State, 0);
+                    editor.commit();
+                    Intent intent = new Intent(GameActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
             });
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         }
-        
+
     }
-    
-    
-    
+
+
+
     //maak een menu bij de menubutton
-    void maakMenu()
+    public void maakMenu()
     {
         final Button buttonMenu = (Button) findViewById(R.id.buttonMenu);  
         buttonMenu.setOnClickListener(new OnClickListener()
