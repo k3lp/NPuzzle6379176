@@ -21,16 +21,13 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.view.MenuItem;
 
 @SuppressLint("NewApi") public class GameActivity extends Activity
 {
-
-
     public static final String MyPREFERENCES = "MyPrefs" ;
-    public static final String Moeilijkheid = "moeilijkheid"; 
-    public static final String ImageNr = "imagenr";
+    public static final String Difficulty = "difficulty"; 
+    public static final String ImageNumber = "imagenumber";
     public static final String State = "state";
     public static final String Array = "array";
 
@@ -48,16 +45,15 @@ import android.view.MenuItem;
             R.drawable.puzzle_5,
             R.drawable.puzzle_6,
             R.drawable.puzzle_7,
-            R.drawable.puzzle_8
-            //R.drawable.puzzle_9
+            R.drawable.puzzle_8,
+            R.drawable.puzzle_9
         };
 
     public ImageView emptyTile;
-    public int emptyTileRow = 0;
-    public int emptyTileColumn = 0;
+    public int emptyTileRow = 0, emptyTileColumn = 0;
     public int state = 0;
     public int restart = 0;
-    public int afterTimer;
+    public int afterTimer = 0;
     public int[][] stateTiles  = new int[2][50];
 
     public int[][] tileIds =
@@ -70,8 +66,11 @@ import android.view.MenuItem;
         };
 
 
-    public int moeilijkheid = 0, imgnr = 0, dimensieTiles = 0;
+    public int difficulty = 0, imagenumber = 0, dimensionTiles = 0;
 
+    
+    
+    
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -79,17 +78,44 @@ import android.view.MenuItem;
         setContentView(R.layout.activity_game);
 
         //krijg info van intents
-        moeilijkheid = getIntent().getExtras().getInt("moeilijkheid");
-        imgnr = getIntent().getExtras().getInt("imagebm");
+        difficulty = getIntent().getExtras().getInt("difficulty");
+        imagenumber = getIntent().getExtras().getInt("imagebm");
         restart = getIntent().getExtras().getInt("restart");
 
-        reqWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.8);
-        reqHeight= (int) (getResources().getDisplayMetrics().widthPixels * 0.8);
+        double scaleDisplayMetrics = 0.8;
+        reqWidth = (int) (getResources().getDisplayMetrics().widthPixels * scaleDisplayMetrics);
+        reqHeight= (int) (getResources().getDisplayMetrics().widthPixels * scaleDisplayMetrics);
 
-        dimensieTiles = moeilijkheid + 3;
-
+        dimensionTiles = difficulty + 3;
+        Bitmap volimgbm = null;
+        final BitmapFactory.Options options = new BitmapFactory.Options();
         //maak bitmap van img     
-        Bitmap volimgbm = BitmapFactory.decodeResource(getResources(), imageIds[imgnr]);
+        try
+        {
+            volimgbm = BitmapFactory.decodeResource(getResources(), imageIds[imagenumber]);
+        }
+        catch(OutOfMemoryError e)
+        {
+            options.inSampleSize = 1;
+            try
+            {
+                volimgbm = BitmapFactory.decodeResource(getResources(), imageIds[imagenumber], options); 
+            }
+            catch(OutOfMemoryError e2)
+            {
+                options.inSampleSize *= 2;
+                try
+                {
+                    volimgbm = BitmapFactory.decodeResource(getResources(), imageIds[imagenumber], options);   
+                }
+                catch(OutOfMemoryError e3)
+                {
+                        options.inSampleSize *= 2;
+                        volimgbm = BitmapFactory.decodeResource(getResources(), imageIds[imagenumber], options);   
+                }
+            }
+        }
+        
         //scale bitmap met goede aspect
         Bitmap scaledimgbm = scaleBm(volimgbm);
 
@@ -102,7 +128,7 @@ import android.view.MenuItem;
         if(state == 1)
         {
             //stateTiles vullen met tiles van eerdere state
-            String savedString = settings.getString("string", "");
+            String savedString = settings.getString(Array, "");
             StringTokenizer st = new StringTokenizer(savedString, ",");
             if(savedString != null && !savedString.isEmpty())
             {
@@ -114,7 +140,7 @@ import android.view.MenuItem;
             }
         }
         //maak tiles
-        createBitmapPieces(scaledimgbm, moeilijkheid);
+        createBitmapPieces(scaledimgbm, difficulty);
         afterTimer = 0;
         settings = getSharedPreferences(MyPREFERENCES, 0);
         state = settings.getInt(State,0);
@@ -138,17 +164,10 @@ import android.view.MenuItem;
         {
             afterTimer = 1;
         }
-
-        //debug moeilijkheid
-        TextView tv3 = (TextView) findViewById(R.id.testMoeilijkheid);
-        tv3.setText("moeilijkheid: " + moeilijkheid);
-        //debug imgnr
-        TextView tv4 = (TextView) findViewById(R.id.testImgnr);
-        tv4.setText("imgnr: " + (imgnr+1));
     }
 
 
-
+    
 
     @Override
     public void onPause()
@@ -159,8 +178,8 @@ import android.view.MenuItem;
         editor.clear();
         if(restart != 1)
         {
-            editor.putInt(Moeilijkheid, moeilijkheid);
-            editor.putInt(ImageNr, imgnr);
+            editor.putInt(Difficulty, difficulty);
+            editor.putInt(ImageNumber, imagenumber);
             editor.putInt(State, 1);
 
             String savedString = "";
@@ -173,7 +192,7 @@ import android.view.MenuItem;
                 str.append(stateTiles[0][j]).append(",");
                 savedString = str.toString();
             }
-            editor.putString("string", savedString);
+            editor.putString(Array, savedString);
             editor.commit();
         }
     }
@@ -218,6 +237,8 @@ import android.view.MenuItem;
 
     }
 
+    
+    
 
     public void hussleTiles()
     {
@@ -225,8 +246,8 @@ import android.view.MenuItem;
         int count = 0, randj = 0, randi = 0;
         while(count < 1000)
         {
-            randj = r.nextInt(moeilijkheid+3);
-            randi = r.nextInt(moeilijkheid+3);
+            randj = r.nextInt(dimensionTiles);
+            randi = r.nextInt(dimensionTiles);
             ImageView v;
             v = (ImageView) findViewById(tileIds[randi][randj]);
             onClickTileMove(v);   
@@ -234,12 +255,15 @@ import android.view.MenuItem;
         }
     }
 
-    public void createBitmapPieces(Bitmap scaledimgbm, final Integer moeilijkheid)
+    
+    
+    
+    public void createBitmapPieces(Bitmap scaledimgbm, final Integer difficulty)
     {
-        int pt1 = (int)(scaledimgbm.getWidth()/dimensieTiles);
-        int pt2 = (int)(scaledimgbm.getHeight()/dimensieTiles);
+        int pt1 = (int)(scaledimgbm.getWidth()/dimensionTiles);
+        int pt2 = (int)(scaledimgbm.getHeight()/dimensionTiles);
 
-        if(moeilijkheid == 0)
+        if(difficulty == 0)
         {
             final Bitmap [][] bitmapTiles =
                 {
@@ -258,7 +282,7 @@ import android.view.MenuItem;
                 };
             createTiles(bitmapTiles);
         }
-        else if(moeilijkheid == 1)
+        else if(difficulty == 1)
         {
             
             Bitmap [][] bitmapTiles =
@@ -286,7 +310,7 @@ import android.view.MenuItem;
                 };
             createTiles(bitmapTiles);
         }
-        else if(moeilijkheid == 2)
+        else if(difficulty == 2)
         {
             
             Bitmap [][] bitmapTiles =
@@ -326,15 +350,18 @@ import android.view.MenuItem;
         
     }
 
+    
+    
+    
     public void createTiles(Bitmap[][] bitmap)
     {
         final Bitmap[][] bitmapTiles = bitmap;
         int statesCount = 0;
         int stateX = 0;
         int stateY = 0;
-        for(int i = 0; i < dimensieTiles; i++)
+        for(int i = 0; i < dimensionTiles; i++)
         {
-            for(int j = 0; j < dimensieTiles; j++)
+            for(int j = 0; j < dimensionTiles; j++)
             {
                 ImageView imageTile;
                 imageTile = (ImageView) findViewById(tileIds[i][j]);
@@ -388,6 +415,10 @@ import android.view.MenuItem;
             }
         }
     }
+    
+    
+    
+    
     public void onClickTileMove(View v)
     {
         int x = -1, y= -1;
@@ -395,9 +426,9 @@ import android.view.MenuItem;
         if(v.getVisibility() == View.VISIBLE)
         {
             //loop over tile ids voor coordinaten geklikte view
-            for(int i = 0; i < moeilijkheid+3; i++)
+            for(int i = 0; i < dimensionTiles; i++)
             {
-                for(int j = 0; j < moeilijkheid+3; j++)
+                for(int j = 0; j < dimensionTiles; j++)
                 {
                     if(v.getId()==tileIds[i][j])
                     {
@@ -427,6 +458,8 @@ import android.view.MenuItem;
     }
 
 
+    
+    
     public void checkEndGame(Bitmap [][] bitmapTiles)
     {
         //staan alle bitmaps in volgorde
@@ -435,12 +468,12 @@ import android.view.MenuItem;
         //als gelijk dan is alles in volgorde en end game
         //state opslaan met bitmapTiles id
         //
-        int aantalTiles = dimensieTiles*dimensieTiles;
+        int aantalTiles = dimensionTiles*dimensionTiles;
         int count = 0;
         int tileCount = 0;
-        for(int i = 0; i < dimensieTiles; i++)
+        for(int i = 0; i < dimensionTiles; i++)
         {
-            for(int j = 0; j < dimensieTiles; j++)
+            for(int j = 0; j < dimensionTiles; j++)
             {
                 ImageView viewChecked = (ImageView) findViewById(tileIds[i][j]);
                 Bitmap bitmapView = ((BitmapDrawable)viewChecked.getDrawable()).getBitmap();
@@ -451,9 +484,9 @@ import android.view.MenuItem;
                     count++;
                 }
                 //loop voor state
-                for(int k = 0; k < dimensieTiles; k++)
+                for(int k = 0; k < dimensionTiles; k++)
                 {
-                    for(int l = 0; l < dimensieTiles; l++)
+                    for(int l = 0; l < dimensionTiles; l++)
                     {
                         bitmapOriginalView = bitmapTiles[k][l];
                         if(bitmapView.sameAs(bitmapOriginalView))
@@ -501,6 +534,7 @@ import android.view.MenuItem;
     }
 
 
+    
 
     //maak een menu bij de menubutton
     public void maakMenu()
@@ -522,6 +556,8 @@ import android.view.MenuItem;
     }
 
 
+    
+    
     public void toStart(MenuItem item)
     {
         restart = 1;
@@ -536,6 +572,8 @@ import android.view.MenuItem;
     }
 
 
+    
+    
     public void toMakkelijker(MenuItem item)
     {
         restart = 1;
@@ -544,18 +582,20 @@ import android.view.MenuItem;
         editor.clear();
         editor.putInt(State, 0);
         editor.commit();
-        if(moeilijkheid != 0)
+        if(difficulty != 0)
         {
-            moeilijkheid -= 1;
+            difficulty -= 1;
         }
-        //stuur id van img mee en moeilijkheid
+        //stuur id van img mee en difficulty
         Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra("imagebm", imgnr);
-        intent.putExtra("moeilijkheid", moeilijkheid);
+        intent.putExtra("imagebm", imagenumber);
+        intent.putExtra("difficulty", difficulty);
         startActivity(intent);
         finish();
     }
 
+    
+    
 
     public void toMoeilijker(MenuItem item)
     {
@@ -565,20 +605,22 @@ import android.view.MenuItem;
         editor.clear();
         editor.putInt(State, 0);
         editor.commit();
-        if(moeilijkheid != 2)
+        if(difficulty != 2)
         {
-            moeilijkheid += 1;
+            difficulty += 1;
         }
-        //stuur id van img mee en moeilijkheid
+        //stuur id van img mee en difficulty
         Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra("imagebm", imgnr);
-        intent.putExtra("moeilijkheid", moeilijkheid);
+        intent.putExtra("imagebm", imagenumber);
+        intent.putExtra("difficulty", difficulty);
         startActivity(intent);
         finish();
     }
 
 
-    //restart deze activity met moeilijkheid etc
+    
+    
+    //restart deze activity met difficulty etc
     public void toRestart(View v)
     {
         restart = 1;
@@ -587,10 +629,10 @@ import android.view.MenuItem;
         editor.clear();
         editor.putInt(State, 0);
         editor.commit();
-        //stuur id van img mee en moeilijkheid
+        //stuur id van img mee en difficulty
         Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra("imagebm", imgnr);
-        intent.putExtra("moeilijkheid", moeilijkheid);
+        intent.putExtra("imagebm", imagenumber);
+        intent.putExtra("difficulty", difficulty);
         startActivity(intent);
         finish();
     }

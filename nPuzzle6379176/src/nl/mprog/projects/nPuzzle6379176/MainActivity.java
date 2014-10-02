@@ -22,8 +22,8 @@ import android.widget.TextView;
 public class MainActivity extends Activity 
 {
     public static final String State = "state";
-    public static final String Moeilijkheid = "moeilijkheid"; 
-    public static final String ImageNr = "imagenr";
+    public static final String Difficulty = "difficulty";
+    public static final String ImageNumber = "imagenumber";
     public static final String MyPREFERENCES = "MyPrefs" ;
     SharedPreferences settings;
 
@@ -38,13 +38,14 @@ public class MainActivity extends Activity
             R.drawable.puzzle_5,
             R.drawable.puzzle_6,
             R.drawable.puzzle_7,
-            R.drawable.puzzle_8
-            //R.drawable.puzzle_9
+            R.drawable.puzzle_8,
+            R.drawable.puzzle_9
         };
-    public int difficulty = 1, imgnr = 0;
-    public int reqHeight = 800, reqWidth = 800;
+    public int difficulty = 1, imagenumber = 0;
+    public int reqHeight = 0, reqWidth = 0;
 
 
+    
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -52,9 +53,11 @@ public class MainActivity extends Activity
         setContentView(R.layout.activity_main);
         //maak gallery
         LinearLayout gallery1 = (LinearLayout)findViewById(R.id.gallery1);
-
+        double scaleDisplayMetrics = 0.8;
+        reqWidth = (int) (getResources().getDisplayMetrics().widthPixels * scaleDisplayMetrics);
+        reqHeight= (int) (getResources().getDisplayMetrics().widthPixels * scaleDisplayMetrics);
         //vul gallery met imgs
-        for(int i=0;i<9;i++)
+        for(int i=0;i<imageIds.length;i++)
         {
             gallery1.addView(addGallery(imageIds[i], i));
         }
@@ -65,6 +68,8 @@ public class MainActivity extends Activity
 
     }
 
+    
+    
     @Override
     protected void onResume()
     {
@@ -74,17 +79,16 @@ public class MainActivity extends Activity
         settings = getSharedPreferences(MyPREFERENCES, 0);
 
         // Necessary to clear first if we save preferences onPause. 
-        int test = settings.getInt(State,0);
-        int stateMoeilijkheid = settings.getInt(Moeilijkheid, 0);
-        int stateImgnr = settings.getInt(ImageNr, 0);
-        System.out.println(test);
+        int state = settings.getInt(State,0);
+        int stateDifficulty = settings.getInt(Difficulty, 0);
+        int stateImgnr = settings.getInt(ImageNumber, 0);
 
-        if(test == 1)
+        if(state == 1)
         { 
             Intent intent = new Intent(this, GameActivity.class);
             //stuur id van img mee en moeilijkheid
             intent.putExtra("imagebm", stateImgnr);
-            intent.putExtra("moeilijkheid", stateMoeilijkheid);
+            intent.putExtra("difficulty", stateDifficulty);
             startActivity(intent);
             finish();
         }
@@ -92,6 +96,8 @@ public class MainActivity extends Activity
 
     }
 
+    
+    
     //gallery
     public View addGallery(Integer imageId, final Integer i)
     {
@@ -99,16 +105,44 @@ public class MainActivity extends Activity
         Bitmap bm = null, bm2 = null;
         final BitmapFactory.Options options = new BitmapFactory.Options();
         //vul bitmap
-        bm = BitmapFactory.decodeResource(getResources(), imageId);
+        try
+        {
+            bm = BitmapFactory.decodeResource(getResources(), imageId);
+        }
+        catch(OutOfMemoryError e)
+        {
+            options.inSampleSize = 2;
+            try
+            {
+                bm = BitmapFactory.decodeResource(getResources(), imageId, options); 
+            }
+            catch(OutOfMemoryError e2)
+            {
+                options.inSampleSize *= 2;
+                try{
+                    bm = BitmapFactory.decodeResource(getResources(), imageId, options);   
+                }
+                catch(OutOfMemoryError e3)
+                {
+                    options.inSampleSize *= 2;
+                    bm = BitmapFactory.decodeResource(getResources(), imageId, options);   
+                }
+
+            }
+            //Use BitmapFactory.Options with an inSampleSize >= 1, and do inSampleSize *= 2 before each retry. 
+        }
         //maak bitmap kleiner anders lag
         int subsample = resizeBitmap(bm);
+        bm.recycle();
         options.inSampleSize = subsample;
+        
         //maak bitmap met subsample
         bm2 = BitmapFactory.decodeResource(getResources(), imageId, options); 
 
         //layout
+        int padding = 50;
         LinearLayout layout = new LinearLayout(getApplicationContext());
-        layout.setLayoutParams(new LayoutParams(reqHeight+50, reqWidth+50));
+        layout.setLayoutParams(new LayoutParams(reqHeight+padding, reqWidth+padding));
         layout.setGravity(Gravity.CENTER);
 
         //set img view voor bitmap
@@ -125,7 +159,7 @@ public class MainActivity extends Activity
             {
                 TextView tv = (TextView) findViewById(R.id.textAfbeeldingNr);
                 tv.setText("Gekozen Afbeelding: " + (i+1));
-                imgnr = i;
+                imagenumber = i;
             }
         });
 
@@ -134,6 +168,7 @@ public class MainActivity extends Activity
     }
 
 
+    
     public int resizeBitmap(Bitmap bm)
     {
         //haal height/width van img
@@ -153,7 +188,9 @@ public class MainActivity extends Activity
         return subsample;
     }
 
-    //initialiseer de seekbar voor moeilijkheid
+    
+    
+    //initialiseer de seekbar voor difficulty
     public void initSeek(SeekBar seekbar)
     {
         seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
@@ -186,13 +223,15 @@ public class MainActivity extends Activity
         });
     }
 
+    
+    
     //naar Game
     public void toGame(View view)
     {
         Intent intent = new Intent(this, GameActivity.class);
         //stuur id van img mee en moeilijkheid
-        intent.putExtra("imagebm", imgnr);
-        intent.putExtra("moeilijkheid", difficulty);
+        intent.putExtra("imagebm", imagenumber);
+        intent.putExtra("difficulty", difficulty);
         intent.putExtra("restart", 0);
         startActivity(intent);
         finish();
