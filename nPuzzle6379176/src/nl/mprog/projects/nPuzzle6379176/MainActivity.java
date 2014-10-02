@@ -1,10 +1,16 @@
 package nl.mprog.projects.nPuzzle6379176;
 
+import java.util.StringTokenizer;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,8 +21,17 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+@SuppressLint("NewApi")
 public class MainActivity extends Activity 
 {
+
+
+    public static final String State = "state";
+    public static final String Moeilijkheid = "moeilijkheid"; 
+    public static final String ImageNr = "imagenr";
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    SharedPreferences settings;
+    
     //ids van puzzle opslaan
     public Integer[] imageIds =
     {
@@ -37,8 +52,9 @@ public class MainActivity extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
+
+        setContentView(R.layout.activity_main);
         //maak gallery
         LinearLayout gallery1 = (LinearLayout)findViewById(R.id.gallery1);
 
@@ -50,6 +66,53 @@ public class MainActivity extends Activity
 
         //maak seekbar
         initSeek((SeekBar) findViewById(R.id.sliderMoeilijkheid));
+        
+        
+    }
+    
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+                Log.v("chingchong", "+ ON RESUME MAIN +");
+
+                settings = getSharedPreferences(MyPREFERENCES, 0);
+                
+                // Necessary to clear first if we save preferences onPause. 
+                int test = settings.getInt(State,0);
+                int stateMoeilijkheid = settings.getInt(Moeilijkheid, 0);
+                int stateImgnr = settings.getInt(ImageNr, 0);
+                System.out.println(test);
+                
+                if(test == 1)
+                { 
+                    Intent intent = new Intent(this, GameActivity.class);
+                    //stuur id van img mee en moeilijkheid
+                    intent.putExtra("imagebm", stateImgnr);
+                    intent.putExtra("moeilijkheid", stateMoeilijkheid);
+                    startActivity(intent);
+                    finish();
+                }
+        
+        
+        /*
+        String savedString = prefs.getString("string", "");
+        StringTokenizer st = new StringTokenizer(savedString, ",");
+        int[][] savedList = new int[2][25];
+        System.out.print("hallo");
+        if(savedString != null && !savedString.isEmpty())
+        {
+            System.out.print("state");
+            for (int i = 0; i <2; i++)
+            {
+                for (int j = 0; j < 25; j++)
+                {
+                    savedList[i][j] = Integer.parseInt(st.nextToken());
+                    System.out.println(savedList[i][j]);
+                }
+            }
+        }*/
+        
     }
 
     //gallery

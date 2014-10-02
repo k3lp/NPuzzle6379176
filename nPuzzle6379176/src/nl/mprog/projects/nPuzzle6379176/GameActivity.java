@@ -5,8 +5,11 @@ import java.util.Random;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -26,6 +29,13 @@ import android.view.MenuItem;
 @SuppressLint("NewApi") public class GameActivity extends Activity
 {
 
+    
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String Moeilijkheid = "moeilijkheid"; 
+    public static final String ImageNr = "imagenr";
+    public static final String State = "state";
+    SharedPreferences settings;
+    
     private int reqHeight = 0, reqWidth = 0;
     public Integer[] imageIds =
     {
@@ -43,8 +53,10 @@ import android.view.MenuItem;
     public ImageView emptyTile;
     public int emptyTileRow;
     public int emptyTileColumn;
+    public int restart = 0;
     public int afterTimer;
-    public Integer[][] tileIds =
+    public int[][] stateTiles  = new int[2][25];
+    public int[][] tileIds =
     {
         {R.id.h11, R.id.h12, R.id.h13, R.id.h14, R.id.h15},
         {R.id.h21, R.id.h22, R.id.h23, R.id.h24, R.id.h25},
@@ -68,7 +80,12 @@ import android.view.MenuItem;
 
         reqWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.8);
         reqHeight= (int) (getResources().getDisplayMetrics().widthPixels * 0.8);
+        
+        //sharedpreferences
+
+        
         dimensieTiles = moeilijkheid + 3;
+        
         //maak bitmap van img     
         Bitmap volimgbm = BitmapFactory.decodeResource(getResources(), imageIds[imgnr]);
         //scale bitmap met goede aspect
@@ -109,7 +126,73 @@ import android.view.MenuItem;
         tv4.setText("imgnr: " + (imgnr+1));
     }
 
+    
+    
+    
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        Log.v("chingchong", "+ ON PAUSE +");
+        settings = getSharedPreferences(MyPREFERENCES, 0);
+        Editor editor = settings.edit();
+        editor.clear();
+        if(restart != 1)
+        {
+            editor.putInt(Moeilijkheid, moeilijkheid);
+            editor.putInt(ImageNr, imgnr);
+            Log.v("chingchong", "+ SET STATE+");
+            editor.putInt(State, 1);
+            editor.commit();
+        }
 
+        //tile array
+        /*StringBuilder str = new StringBuilder();
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 25; j++) {
+                str.append(stateTiles[i][j]).append(",");
+            }
+        }
+        settings.edit().putString("string", str.toString());
+
+        System.out.print("hallo");
+        System.out.print("hallo");
+        System.out.print("hallo");
+        editor.commit();*/
+        Log.v("chingchong", "+ ON PAUSE +");
+    }
+
+    
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+                Log.v("chingchong", "+ ON RESUME +");
+        settings = getSharedPreferences(MyPREFERENCES, 0);
+        
+        // Necessary to clear first if we save preferences onPause. 
+        int test = settings.getInt(State,0);
+        System.out.println(test);
+        /*String savedString = prefs.getString("string", "");
+        StringTokenizer st = new StringTokenizer(savedString, ",");
+        int[][] savedList = new int[2][25];
+        System.out.print("hallo");
+        if(savedString != null && !savedString.isEmpty())
+        {
+            System.out.print("state");
+            for (int i = 0; i <2; i++)
+            {
+                for (int j = 0; j < 25; j++)
+                {
+                    savedList[i][j] = Integer.parseInt(st.nextToken());
+                    System.out.println(savedList[i][j]);
+                }
+            }
+        }*/
+        
+    }
+    
+    
     Bitmap scaleBm(Bitmap volimgbm)
     {
         int volimgbmWidth = volimgbm.getWidth(), volimgbmHeight = volimgbm.getHeight();
@@ -378,6 +461,7 @@ import android.view.MenuItem;
         //
         int aantalTiles = dimensieTiles*dimensieTiles;
         int count = 0;
+        int tileCount = 0;
         for(int i = 0; i < dimensieTiles; i++)
         {
             for(int j = 0; j < dimensieTiles; j++)
@@ -385,17 +469,41 @@ import android.view.MenuItem;
                 ImageView viewChecked = (ImageView) findViewById(tileIds[i][j]);
                 Bitmap bitmapView = ((BitmapDrawable)viewChecked.getDrawable()).getBitmap();
                 Bitmap bitmapOriginalView = bitmapTiles[i][j];
+
                 if(bitmapView.sameAs(bitmapOriginalView))
                 {
                     count++;
-                    System.out.println(aantalTiles-1);
-                    System.out.println(count);
                 }
+                //System.out.println(count);
+                //loop voor state
+                for(int k = 0; k < dimensieTiles; k++)
+                {
+                    for(int l = 0; l < dimensieTiles; l++)
+                    {
+                        bitmapOriginalView = bitmapTiles[k][l];
+                        if(bitmapView.sameAs(bitmapOriginalView))
+                        {
+                            stateTiles[0][tileCount]= k;
+                            stateTiles[1][tileCount] = l;
+                        }
+                        //als het de lege tile is
+                        if(viewChecked.getVisibility() == View.INVISIBLE)
+                        {
+                            stateTiles[0][tileCount]= -1;
+                            stateTiles[1][tileCount] = -1;
+                        }
+                    }
+                }
+                tileCount++;
             }
         }
+        /*for(int m = 0; m < 9; m++)
+        {
+                    System.out.println(stateTiles[0][m]);
+                    System.out.println(stateTiles[1][m]);
+        }*/
         if(count == (aantalTiles-1))
         {
-            System.out.println(count);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.endgame_text);
             builder.setTitle(R.string.endgame_title);
@@ -405,6 +513,10 @@ import android.view.MenuItem;
                @Override
                public void onClick(DialogInterface arg0, int arg1)
                {
+                   settings = getSharedPreferences(MyPREFERENCES, 0);
+                   Editor editor = settings.edit();
+                   // Necessary to clear first if we save preferences onPause. 
+                   editor.clear();
                    Intent intent = new Intent(GameActivity.this, MainActivity.class);
                    startActivity(intent);
                    finish();
@@ -440,7 +552,17 @@ import android.view.MenuItem;
 
     public void toStart(MenuItem item)
     {
-        //stuur id van img mee en moeilijkheid
+        
+        restart = 1;
+        settings = getSharedPreferences(MyPREFERENCES, 0);
+        Editor editor = settings.edit();
+        editor.clear();
+        editor.putInt(State, 0);
+        Log.v("chingchong", "+ SET STATE RESTART+");
+        editor.commit();
+        int test = settings.getInt(State,0);
+        Log.v("chingchong", "+ ON TOSTART +");
+        System.out.println(test);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
