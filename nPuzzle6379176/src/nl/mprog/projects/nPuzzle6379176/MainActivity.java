@@ -216,6 +216,7 @@ public class MainActivity extends Activity
         //stuur id van img mee en moeilijkheid
         intent.putExtra("imagebm", imgnr);
         intent.putExtra("moeilijkheid", difficulty);
+        intent.putExtra("restart", 0);
         startActivity(intent);
         finish();
     }

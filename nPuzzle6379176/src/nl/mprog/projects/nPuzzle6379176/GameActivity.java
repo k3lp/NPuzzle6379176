@@ -1,6 +1,7 @@
 package nl.mprog.projects.nPuzzle6379176;
 
 import java.util.Random;
+import java.util.StringTokenizer;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -51,8 +52,9 @@ import android.view.MenuItem;
         //R.drawable.puzzle_9
     };
     public ImageView emptyTile;
-    public int emptyTileRow;
-    public int emptyTileColumn;
+    public int emptyTileRow = 0;
+    public int emptyTileColumn = 0;
+    public int state = 0;
     public int restart = 0;
     public int afterTimer;
     public int[][] stateTiles  = new int[2][25];
@@ -77,6 +79,7 @@ import android.view.MenuItem;
         //krijg info van intents
         moeilijkheid = getIntent().getExtras().getInt("moeilijkheid");
         imgnr = getIntent().getExtras().getInt("imagebm");
+        restart = getIntent().getExtras().getInt("restart");
 
         reqWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.8);
         reqHeight= (int) (getResources().getDisplayMetrics().widthPixels * 0.8);
@@ -94,29 +97,78 @@ import android.view.MenuItem;
         //menubutton
         maakMenu();
         
+        settings = getSharedPreferences(MyPREFERENCES, 0);
+        state = settings.getInt(State,0);
+        //Log.v("chingchong", "+STATE ONCREATE VOOR TILES+" + state);
+        
+        
+        if(state == 1)
+        {
+            //stateTiles vullen met tiles van eerdere state
+            String savedString = settings.getString("string", "");
+            StringTokenizer st = new StringTokenizer(savedString, ",");
+            Log.v("chingchong", "dit zit erin RESUME: " + savedString);
+            if(savedString != null && !savedString.isEmpty())
+            {
+                Log.v("chingchong", "+ ZIT IETS IN STRING +");
+                System.out.print("state");
+                //moet 50
+                for (int j = 0; j < 25; j++)
+                {
+                        stateTiles[1][j] = Integer.parseInt(st.nextToken());
+                        stateTiles[0][j] = Integer.parseInt(st.nextToken());
+                        Log.v("onresumestring", ""+stateTiles[1][j]);
+                        Log.v("onresumestring", ""+stateTiles[0][j]);
+                }
+            }
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         //maak tiles
         createTiles(scaledimgbm, moeilijkheid);
 
         //maak "lege" tile
-        emptyTile = (ImageView) findViewById(tileIds[0][0]);
-        emptyTile.setVisibility(View.INVISIBLE);
-        emptyTile.setTag(2);
-        emptyTileRow = 0;
-        emptyTileColumn = 0;
+
         afterTimer = 0;
         
-        //laat tiles even zien
-        Runnable r = new Runnable()
+        
+        settings = getSharedPreferences(MyPREFERENCES, 0);
+        state = settings.getInt(State,0);
+        //Log.v("chingchong", "+STATE ONCREATE NA TILES+" + state);
+        if(state != 1)
         {
-            @Override
-            public void run()
+            emptyTile = (ImageView) findViewById(tileIds[0][0]);
+
+            //Log.v("sdfasdf", "STATE MOET 0 ZIJN"+ state);
+            //laat tiles even zien
+            Runnable r = new Runnable()
             {
-                hussleTiles();
-                afterTimer = 1;
-            }
-        };
-        Handler h = new Handler();
-        h.postDelayed(r, 3000);
+                @Override
+                public void run()
+                {
+                    hussleTiles();
+                    afterTimer = 1;
+                }
+            };
+            Handler h = new Handler();
+            h.postDelayed(r, 3000);
+        }
+        else
+        {
+           // Log.v("sdfasdf", "STATE MOET 1 ZIJN ELSE"+ state);
+            afterTimer = 1;
+        }
 
         //debug moeilijkheid
         TextView tv3 = (TextView) findViewById(R.id.testMoeilijkheid);
@@ -137,60 +189,75 @@ import android.view.MenuItem;
         settings = getSharedPreferences(MyPREFERENCES, 0);
         Editor editor = settings.edit();
         editor.clear();
+        //Log.v("chingchong", "+CLEAR ONPAUSE+");
+        //Log.v("chingchong", "+RESTAR = +" + restart);
         if(restart != 1)
         {
+            //Log.v("chingchong", "+RESTAR IN IF = +" + restart);
             editor.putInt(Moeilijkheid, moeilijkheid);
             editor.putInt(ImageNr, imgnr);
-            Log.v("chingchong", "+ SET STATE+");
+            //Log.v("chingchong", "+ SET STATE+");
             editor.putInt(State, 1);
-            editor.commit();
-        }
+            
+            
+            //Log.v("chingchong", "+state onpause+");
+            
+            String savedString = "";
+            
+            
+            StringBuilder str = new StringBuilder();
 
-        //tile array
-        /*StringBuilder str = new StringBuilder();
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 25; j++) {
-                str.append(stateTiles[i][j]).append(",");
+            for (int j = 0; j < 25; j++)
+            {
+                str.append(stateTiles[1][j]).append(",");
+                str.append(stateTiles[0][j]).append(",");
+
+                //Log.v("onpausestring", str.toString());
+                savedString = str.toString();
             }
-        }
-        settings.edit().putString("string", str.toString());
+            //String savedString = str.toString();
 
-        System.out.print("hallo");
-        System.out.print("hallo");
-        System.out.print("hallo");
-        editor.commit();*/
-        Log.v("chingchong", "+ ON PAUSE +");
+            editor.putString("string", savedString);
+            editor.commit();
+            String test = settings.getString("string", "");
+            Log.v("chingchong", "dit zit erin onpause: " + test);
+            
+            //settings.edit().putString("string", str.toString());
+
+
+        }
+
+        //Log.v("chingchong", "+ ON PAUSE +");
     }
 
     
-    @Override
+   /* @Override
     public void onResume()
     {
         super.onResume();
                 Log.v("chingchong", "+ ON RESUME +");
-        settings = getSharedPreferences(MyPREFERENCES, 0);
-        
-        // Necessary to clear first if we save preferences onPause. 
-        int test = settings.getInt(State,0);
-        System.out.println(test);
-        /*String savedString = prefs.getString("string", "");
-        StringTokenizer st = new StringTokenizer(savedString, ",");
-        int[][] savedList = new int[2][25];
-        System.out.print("hallo");
-        if(savedString != null && !savedString.isEmpty())
-        {
-            System.out.print("state");
-            for (int i = 0; i <2; i++)
-            {
-                for (int j = 0; j < 25; j++)
+                settings = getSharedPreferences(MyPREFERENCES, 0);
+                
+                
+                //stateTiles vullen met tiles van eerdere state
+                String savedString = settings.getString("string", "");
+                StringTokenizer st = new StringTokenizer(savedString, ",");
+                Log.v("chingchong", "dit zit erin RESUME: " + savedString);
+                if(savedString != null && !savedString.isEmpty())
                 {
-                    savedList[i][j] = Integer.parseInt(st.nextToken());
-                    System.out.println(savedList[i][j]);
+                    Log.v("chingchong", "+ ZIT IETS IN STRING +");
+                    System.out.print("state");
+                    //moet 50
+                    for (int j = 0; j < 25; j++)
+                    {
+                            stateTiles[1][j] = Integer.parseInt(st.nextToken());
+                            stateTiles[0][j] = Integer.parseInt(st.nextToken());
+                            Log.v("onresumestring", ""+stateTiles[1][j]);
+                            Log.v("onresumestring", ""+stateTiles[0][j]);
+                    }
                 }
-            }
-        }*/
-        
-    }
+
+    }*/
     
     
     Bitmap scaleBm(Bitmap volimgbm)
@@ -248,7 +315,7 @@ import android.view.MenuItem;
             ImageView v;
             v = (ImageView) findViewById(tileIds[randi][randj]);
             onClickTileMove(v);   
-                count++;
+            count++;
         }
         //Bitmap bm=((BitmapDrawable)imageView.getDrawable()).getBitmap();
     }
@@ -261,7 +328,9 @@ import android.view.MenuItem;
 
         int pt1 = (int)(scaledimgbm.getWidth()/dimensieTiles);
         int pt2 = (int)(scaledimgbm.getHeight()/dimensieTiles);
-        
+        int statesCount = 0;
+        int stateX = 0;
+        int stateY = 0;
         if(moeilijkheid == 0)
         {
             
@@ -287,8 +356,53 @@ import android.view.MenuItem;
                 {
                     ImageView imageTile;
                     imageTile = (ImageView) findViewById(tileIds[i][j]);
-                    imageTile.setImageBitmap(bitmapTiles[i][j]);
-                    imageTile.setTag(bitmapTiles[i][j]);
+                    if(state == 0)
+                    {
+                        if(i == 0 && j == 0)
+                        {
+                            imageTile.setImageBitmap(bitmapTiles[i][j]);
+                            imageTile.setTag(bitmapTiles[i][j]);  
+                            imageTile.setVisibility(View.INVISIBLE);
+                        }
+                        else
+                        {
+                            imageTile.setImageBitmap(bitmapTiles[i][j]);
+                            imageTile.setTag(bitmapTiles[i][j]);  
+                        }
+                    }
+                    else if(state == 1)
+                    {
+                        Log.v("chingchong", "dit zit in stateTiles: ");
+                        for(int p = 0; p < 25; p++)
+                        {
+                            Log.v("ditziterin creattiles", ""+stateTiles[0][p]);
+                            Log.v("ditziterin creattiles", ""+stateTiles[1][p]);
+                        }
+                        Log.v("sdfasdf", "STATE CREATETILES 1 "+ state);
+                        stateY = stateTiles[1][statesCount];
+                        stateX = stateTiles[0][statesCount];
+                        Log.v("sdfasdf", "STATE CREATETILES x"+ stateX);
+                        Log.v("sdfasdf", "STATE CREATETILES y"+ stateY);
+                        if(stateX < 0)
+                        {
+                            imageTile.setImageBitmap(bitmapTiles[stateX+6][stateY+6]);
+                            imageTile.setTag(bitmapTiles[stateX+6][stateY+6]);
+                            emptyTile = (ImageView) findViewById(tileIds[i][j]);
+                            emptyTileRow = i;
+                            emptyTileColumn = j;
+                            imageTile.setVisibility(View.INVISIBLE);
+                        }
+                        else{
+                            Log.v("sdfasdf", "STATE MOET 1 ZIJN"+ state);
+                            imageTile.setImageBitmap(bitmapTiles[stateX][stateY]);
+                            imageTile.setTag(bitmapTiles[stateX][stateY]);
+                        }
+
+                        statesCount++;
+                    }
+                    
+                    
+                    
                     imageTile.setOnClickListener(new OnClickListener()
                     {
                         @Override
@@ -489,8 +603,8 @@ import android.view.MenuItem;
                         //als het de lege tile is
                         if(viewChecked.getVisibility() == View.INVISIBLE)
                         {
-                            stateTiles[0][tileCount]= -1;
-                            stateTiles[1][tileCount] = -1;
+                            stateTiles[0][tileCount]= k-6;
+                            stateTiles[1][tileCount] = l-6;
                         }
                     }
                 }
@@ -514,9 +628,11 @@ import android.view.MenuItem;
                public void onClick(DialogInterface arg0, int arg1)
                {
                    settings = getSharedPreferences(MyPREFERENCES, 0);
-                   Editor editor = settings.edit();
+                   Editor editor = settings.edit().clear();
+                   //Log.v("chingchong", "+CLEAR CLEAR+");
                    // Necessary to clear first if we save preferences onPause. 
                    editor.clear();
+                   //Log.v("chingchong", "+CLEAR CLEAR CLEAR+");
                    Intent intent = new Intent(GameActivity.this, MainActivity.class);
                    startActivity(intent);
                    finish();
@@ -557,11 +673,12 @@ import android.view.MenuItem;
         settings = getSharedPreferences(MyPREFERENCES, 0);
         Editor editor = settings.edit();
         editor.clear();
+        //Log.v("chingchong", "+ CLEAR TOSTART+");
         editor.putInt(State, 0);
-        Log.v("chingchong", "+ SET STATE RESTART+");
+        //Log.v("chingchong", "+ SET STATE RESTART+");
         editor.commit();
         int test = settings.getInt(State,0);
-        Log.v("chingchong", "+ ON TOSTART +");
+        //Log.v("chingchong", "+ ON TOSTART +");
         System.out.println(test);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
