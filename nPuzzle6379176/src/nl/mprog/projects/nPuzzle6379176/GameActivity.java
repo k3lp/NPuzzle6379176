@@ -259,11 +259,11 @@ import android.view.MenuItem;
     
     
     
-    public void createBitmapPieces(Bitmap bitmap, final Integer difficulty)
+    public void createBitmapPieces(Bitmap bitmap, int i)
     {
         int pt1 = (int)(bitmap.getWidth()/dimensionTiles);
         int pt2 = (int)(bitmap.getHeight()/dimensionTiles);
-
+        final int difficulty = i;
         if(difficulty == 0)
         {
             final Bitmap [][] bitmapTiles =
